@@ -1,9 +1,10 @@
 "use client";
 
-import React from "react";
-
-import { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import { gsap } from "gsap";
+import { MouseParallax } from "react-just-parallax";
+
 import { DashboardNav } from "@/components/dashboard-nav";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,6 +32,8 @@ export default function DoubtSolverPage() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [doubts, setDoubts] = useState<Doubt[]>([]);
+  const containerRef = useRef<HTMLDivElement>(null);
+
   const [formData, setFormData] = useState({
     question: "",
     subject: "",
@@ -38,22 +41,25 @@ export default function DoubtSolverPage() {
     language: "english",
   });
 
+  useEffect(() => {
+    gsap.fromTo(
+      containerRef.current,
+      { opacity: 0, y: 24 },
+      { opacity: 1, y: 0, duration: 0.9, ease: "power3.out" },
+    );
+  }, []);
+
   const handleInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >,
   ) => {
     const { name, value } = e.target;
-    console.log(`[v0] Input changed: ${name} = ${value}`);
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("[v0] Form submitted with data:", formData);
 
     if (!formData.question.trim()) {
       toast({
@@ -67,42 +73,29 @@ export default function DoubtSolverPage() {
     setLoading(true);
 
     try {
-      console.log("[v0] Fetching solve doubt API...");
       const response = await fetch("/api/solve-doubt", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
-      console.log("[v0] Response status:", response.status);
       const data = await response.json();
-      console.log("[v0] Response data:", data);
-
-      if (!response.ok) {
-        const errorMsg = data.error || `API Error: ${response.status}`;
-        console.error("[v0] API Error:", errorMsg);
-        throw new Error(errorMsg);
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || "Failed to solve doubt");
       }
 
-      if (!data.success) {
-        console.error("[v0] API returned success=false:", data);
-        throw new Error(data.error || "API returned unsuccessful response");
-      }
+      setDoubts((prev) => [
+        {
+          id: Date.now().toString(),
+          question: formData.question,
+          answer: data.answer || "",
+          subject: formData.subject || undefined,
+          examType: formData.examType || undefined,
+          timestamp: new Date(),
+        },
+        ...prev,
+      ]);
 
-      const newDoubt: Doubt = {
-        id: Date.now().toString(),
-        question: formData.question,
-        answer: data.answer || "",
-        subject: formData.subject || undefined,
-        examType: formData.examType || undefined,
-        timestamp: new Date(),
-      };
-
-      if (!data.answer) {
-        console.warn("[v0] Warning: API returned no answer");
-      }
-
-      setDoubts((prev) => [newDoubt, ...prev]);
       setFormData({
         question: "",
         subject: "",
@@ -127,234 +120,127 @@ export default function DoubtSolverPage() {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-blue-50 via-purple-50 to-pink-50">
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
       <DashboardNav />
 
+      {/* Parallax background accents */}
+      <MouseParallax strength={0.03} enableOnTouchDevice={false}>
+        <div className="absolute -top-40 -left-40 h-[28rem] w-[28rem] rounded-full bg-purple-300/20 blur-3xl" />
+        <div className="absolute -bottom-40 -right-40 h-[28rem] w-[28rem] rounded-full bg-pink-300/20 blur-3xl" />
+      </MouseParallax>
+
       <motion.main
-        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6 }}
+        ref={containerRef}
+        className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10"
       >
-        <motion.div
-          className="mb-8"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-3 bg-linear-to-br from-blue-500 to-purple-500 rounded-xl">
+        {/* Header */}
+        <div className="mb-10">
+          <div className="flex items-center gap-4 mb-2">
+            <div className="p-3 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 shadow-lg">
               <Lightbulb className="w-6 h-6 text-white" />
             </div>
-            <h1 className="text-4xl font-bold text-gradient">
+            <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
               Ask Your Doubts
             </h1>
           </div>
-          <p className="text-lg text-gray-600">
-            Get instant, exam-focused explanations for any concept
+          <p className="text-gray-600 text-lg">
+            Clear, exam-focused explanations — instantly.
           </p>
-        </motion.div>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Question Form */}
-          <motion.div
-            className="lg:col-span-1"
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <Card className="glass-card sticky top-24 border-purple-200/50">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <MessageCircle className="w-5 h-5 text-purple-600" />
-                  New Question
-                </CardTitle>
-                <CardDescription>Ask and get instant answers</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="space-y-2">
-                    <label
-                      htmlFor="question"
-                      className="text-sm font-semibold text-gray-700"
-                    >
-                      Your Question *
-                    </label>
-                    <textarea
-                      id="question"
-                      name="question"
-                      placeholder="Ask your question in detail..."
-                      value={formData.question}
-                      onChange={handleInputChange}
-                      className="w-full rounded-lg border border-purple-200 bg-white/70 px-3 py-2 text-sm min-h-24 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                      required
-                    />
-                  </div>
+          <Card className="lg:col-span-1 sticky top-24 glass-card border-purple-200/60 backdrop-blur-xl">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <MessageCircle className="w-5 h-5 text-purple-600" />
+                New Question
+              </CardTitle>
+              <CardDescription>Ask once. Understand clearly.</CardDescription>
+            </CardHeader>
 
-                  <div className="space-y-2">
-                    <label
-                      htmlFor="subject"
-                      className="text-sm font-semibold text-gray-700"
-                    >
-                      Subject
-                    </label>
-                    <Input
-                      id="subject"
-                      name="subject"
-                      placeholder="e.g., Physics"
-                      value={formData.subject}
-                      onChange={handleInputChange}
-                      className="bg-white/70 border border-purple-200"
-                    />
-                  </div>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <textarea
+                  name="question"
+                  placeholder="Type your question here…"
+                  value={formData.question}
+                  onChange={handleInputChange}
+                  className="w-full min-h-28 rounded-lg border border-purple-200 bg-white/70 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  required
+                />
 
-                  <div className="space-y-2">
-                    <label
-                      htmlFor="examType"
-                      className="text-sm font-semibold text-gray-700"
-                    >
-                      Exam Type
-                    </label>
-                    <select
-                      id="examType"
-                      name="examType"
-                      value={formData.examType}
-                      onChange={handleInputChange}
-                      className="w-full rounded-lg border border-purple-200 bg-white/70 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    >
-                      <option value="">Select exam</option>
-                      <option value="JEE Main">JEE Main</option>
-                      <option value="JEE Advanced">JEE Advanced</option>
-                      <option value="NEET">NEET</option>
-                      <option value="GATE">GATE</option>
-                      <option value="Board">Board</option>
-                    </select>
-                  </div>
+                <Input
+                  name="subject"
+                  placeholder="Subject (optional)"
+                  value={formData.subject}
+                  onChange={handleInputChange}
+                  className="bg-white/70 border-purple-200"
+                />
 
-                  <motion.div
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <Button
-                      type="submit"
-                      className="w-full btn-gradient"
-                      disabled={loading}
-                    >
-                      {loading ? (
-                        <div className="flex items-center gap-2">
-                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                          Getting Answer...
-                        </div>
-                      ) : (
-                        <>
-                          <Send className="w-4 h-4 mr-2" />
-                          Get Answer
-                        </>
-                      )}
-                    </Button>
-                  </motion.div>
-                </form>
-              </CardContent>
-            </Card>
-          </motion.div>
+                <select
+                  name="examType"
+                  value={formData.examType}
+                  onChange={handleInputChange}
+                  className="w-full rounded-lg border border-purple-200 bg-white/70 px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500"
+                >
+                  <option value="">Select exam</option>
+                  <option value="JEE Main">JEE Main</option>
+                  <option value="JEE Advanced">JEE Advanced</option>
+                  <option value="NEET">NEET</option>
+                  <option value="GATE">GATE</option>
+                  <option value="Board">Board</option>
+                </select>
 
-          {/* Doubts History */}
-          <motion.div
-            className="lg:col-span-3"
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            {doubts.length > 0 ? (
-              <div className="space-y-6">
-                {doubts.map((doubt, index) => (
-                  <motion.div
-                    key={doubt.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    whileHover={{ y: -5 }}
-                  >
-                    <Card className="glass-card border-purple-200/50">
-                      <CardHeader>
-                        <div className="flex justify-between items-start gap-4">
-                          <div className="flex-1">
-                            <CardTitle className="text-lg">
-                              {doubt.question}
-                            </CardTitle>
-                            <CardDescription className="mt-2">
-                              {doubt.subject && `📚 ${doubt.subject}`}
-                              {doubt.subject && doubt.examType && " • "}
-                              {doubt.examType && `🎯 ${doubt.examType}`}
-                            </CardDescription>
-                          </div>
-                        </div>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="prose prose-sm max-w-none dark:prose-invert">
-                          <ReactMarkdown
-                            components={{
-                              p: ({ node, ...props }) => (
-                                <p
-                                  className="text-sm text-gray-700 mb-2"
-                                  {...props}
-                                />
-                              ),
-                              h2: ({ node, ...props }) => (
-                                <h3
-                                  className="text-base font-semibold mt-4 mb-2 text-purple-700"
-                                  {...props}
-                                />
-                              ),
-                              h3: ({ node, ...props }) => (
-                                <h4
-                                  className="text-sm font-semibold mt-3 mb-1 text-purple-600"
-                                  {...props}
-                                />
-                              ),
-                              ul: ({ node, ...props }) => (
-                                <ul
-                                  className="list-disc list-inside space-y-1 text-sm"
-                                  {...props}
-                                />
-                              ),
-                              strong: ({ node, ...props }) => (
-                                <strong
-                                  className="font-semibold text-purple-700"
-                                  {...props}
-                                />
-                              ),
-                            }}
-                          >
-                            {doubt.answer}
-                          </ReactMarkdown>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
-              </div>
+                <Button
+                  type="submit"
+                  className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:scale-[1.02] transition"
+                  disabled={loading}
+                >
+                  {loading ? "Thinking…" : "Get Answer"}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+
+          {/* Doubt History */}
+          <div className="lg:col-span-3 space-y-6">
+            {doubts.length ? (
+              doubts.map((doubt, i) => (
+                <motion.div
+                  key={doubt.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.08 }}
+                >
+                  <Card className="glass-card border-purple-200/60 hover:shadow-lg transition-shadow">
+                    <CardHeader>
+                      <CardTitle className="text-lg">
+                        {doubt.question}
+                      </CardTitle>
+                      <CardDescription>
+                        {doubt.subject && `📘 ${doubt.subject}`}{" "}
+                        {doubt.examType && ` • 🎯 ${doubt.examType}`}
+                      </CardDescription>
+                    </CardHeader>
+
+                    <CardContent className="prose prose-sm max-w-none">
+                      <ReactMarkdown>{doubt.answer}</ReactMarkdown>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))
             ) : (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3 }}
-              >
-                <Card className="glass-card h-96 flex items-center justify-center border-purple-200/50">
-                  <div className="text-center">
-                    <motion.div
-                      animate={{ y: [0, -10, 0] }}
-                      transition={{ duration: 3, repeat: Infinity }}
-                    >
-                      <MessageCircle className="w-20 h-20 mx-auto mb-4 text-purple-300" />
-                    </motion.div>
-                    <p className="text-gray-600 font-semibold">
-                      No questions yet. Ask your first doubt!
-                    </p>
-                  </div>
-                </Card>
-              </motion.div>
+              <Card className="h-96 flex items-center justify-center glass-card border-purple-200/60">
+                <div className="text-center">
+                  <MessageCircle className="w-16 h-16 mx-auto mb-4 text-purple-300" />
+                  <p className="text-gray-600 font-medium">
+                    Ask your first doubt to begin ✨
+                  </p>
+                </div>
+              </Card>
             )}
-          </motion.div>
+          </div>
         </div>
       </motion.main>
     </div>

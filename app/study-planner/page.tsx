@@ -1,7 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import { gsap } from "gsap";
+import { MouseParallax } from "react-just-parallax";
+
 import { DashboardNav } from "@/components/dashboard-nav";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,26 +29,34 @@ import {
   Loader2,
 } from "lucide-react";
 
+/* ---------- motion presets (kept lightweight) ---------- */
+
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.1, delayChildren: 0.2 },
+    transition: { staggerChildren: 0.08, delayChildren: 0.15 },
   },
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+  hidden: { opacity: 0, y: 18 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.45, ease: "easeOut" },
+  },
 };
 
 const cardVariants = {
-  hidden: { opacity: 0, x: -30 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.5, ease: "easeOut" } },
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
 };
 
 export default function StudyPlannerPage() {
   const { toast } = useToast();
+  const pageRef = useRef<HTMLDivElement>(null);
+
   const [formData, setFormData] = useState({
     subject: "",
     exam: "JEE Advanced",
@@ -57,6 +68,15 @@ export default function StudyPlannerPage() {
   const [loading, setLoading] = useState(false);
   const [plan, setPlan] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  /* ---------- GSAP page entrance ---------- */
+  useEffect(() => {
+    gsap.fromTo(
+      pageRef.current,
+      { opacity: 0, y: 26 },
+      { opacity: 1, y: 0, duration: 0.9, ease: "power3.out" },
+    );
+  }, []);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -100,70 +120,56 @@ export default function StudyPlannerPage() {
 
       const data = await response.json();
 
-      if (!response.ok) {
+      if (!response.ok || !data.success || !data.plan) {
         throw new Error(data.error || "Failed to generate study plan");
-      }
-
-      if (!data.success) {
-        throw new Error(data.error || "API returned unsuccessful response");
-      }
-
-      if (!data.plan) {
-        throw new Error("No plan received from API");
       }
 
       setPlan(data.plan);
       toast({
-        title: "Success!",
+        title: "Success",
         description: "Study plan generated successfully",
       });
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "An error occurred";
-      setError(errorMessage);
-      toast({
-        title: "Error",
-        description: errorMessage,
-        variant: "destructive",
-      });
+      const msg = err instanceof Error ? err.message : "An error occurred";
+      setError(msg);
+      toast({ title: "Error", description: msg, variant: "destructive" });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-purple-50 via-blue-50 to-indigo-50">
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50">
       <DashboardNav />
 
+      {/* Parallax ambient blobs */}
+      <MouseParallax strength={0.03} enableOnTouchDevice={false}>
+        <div className="absolute -top-40 -left-40 h-[30rem] w-[30rem] rounded-full bg-purple-300/20 blur-3xl" />
+        <div className="absolute -bottom-40 -right-40 h-[30rem] w-[30rem] rounded-full bg-blue-300/20 blur-3xl" />
+      </MouseParallax>
+
       <motion.main
-        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6 }}
+        ref={pageRef}
+        className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12"
       >
         {/* Header */}
-        <motion.div
-          className="mb-12"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-3 bg-linear-to-br from-purple-500 to-blue-500 rounded-xl shadow-lg">
-              <Calendar className="w-8 h-8 text-white" />
+        <div className="mb-14">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="p-3 rounded-xl bg-gradient-to-br from-purple-600 to-blue-600 shadow-lg">
+              <Calendar className="w-7 h-7 text-white" />
             </div>
-            <h1 className="text-5xl font-bold bg-linear-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+            <h1 className="text-5xl font-bold tracking-tight bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
               Study Plan Generator
             </h1>
           </div>
-          <p className="text-lg text-gray-600">
-            Create personalized, day-wise study plans powered by AI. Get
-            detailed breakdown of topics, resources, and tips.
+          <p className="text-lg text-gray-600 max-w-3xl">
+            Create realistic, day-wise study plans with focused goals, revision
+            buffers, and exam-oriented strategies.
           </p>
-        </motion.div>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Form Section */}
+          {/* Form */}
           <motion.div
             className="lg:col-span-1"
             variants={containerVariants}
@@ -171,125 +177,95 @@ export default function StudyPlannerPage() {
             animate="visible"
           >
             <motion.div variants={itemVariants}>
-              <Card className="sticky top-24 border-purple-200/50 shadow-lg">
+              <Card className="sticky top-24 glass-card border-purple-200/60">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Target className="w-5 h-5 text-purple-600" />
                     Plan Details
                   </CardTitle>
-                  <CardDescription>Customize your study plan</CardDescription>
+                  <CardDescription>
+                    Personalize your study strategy
+                  </CardDescription>
                 </CardHeader>
+
                 <CardContent>
                   <form onSubmit={handleSubmit} className="space-y-4">
-                    {/* Subject */}
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Subject <span className="text-red-500">*</span>
-                      </label>
-                      <Input
-                        type="text"
-                        name="subject"
-                        value={formData.subject}
-                        onChange={handleInputChange}
-                        placeholder="e.g., Physics, Chemistry, Biology"
-                        className="w-full bg-white/70 border-purple-200 focus:border-purple-500"
-                        required
-                      />
-                    </div>
+                    <Input
+                      name="subject"
+                      value={formData.subject}
+                      onChange={handleInputChange}
+                      placeholder="Subject (e.g. Physics)"
+                      required
+                    />
 
-                    {/* Exam Type */}
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Exam Type <span className="text-red-500">*</span>
-                      </label>
-                      <select
-                        name="exam"
-                        value={formData.exam}
-                        onChange={handleInputChange}
-                        className="w-full px-3 py-2 border border-purple-200 rounded-lg bg-white/70 focus:outline-none focus:ring-2 focus:ring-purple-500 font-medium"
-                      >
-                        <option value="JEE Advanced">JEE Advanced</option>
-                        <option value="JEE Mains">JEE Mains</option>
-                        <option value="NEET">NEET</option>
-                        <option value="GATE">GATE</option>
-                        <option value="Board Exam">Board Exam</option>
-                        <option value="UPSC">UPSC</option>
-                        <option value="CAT">CAT</option>
-                        <option value="Custom Exam">Custom Exam</option>
-                      </select>
-                    </div>
+                    <select
+                      name="exam"
+                      value={formData.exam}
+                      onChange={handleInputChange}
+                      className="w-full rounded-lg border border-purple-200 bg-white/70 px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500"
+                    >
+                      {[
+                        "JEE Advanced",
+                        "JEE Mains",
+                        "NEET",
+                        "GATE",
+                        "Board Exam",
+                        "UPSC",
+                        "CAT",
+                      ].map((e) => (
+                        <option key={e} value={e}>
+                          {e}
+                        </option>
+                      ))}
+                    </select>
 
-                    {/* Days */}
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Days Available <span className="text-red-500">*</span>
-                      </label>
-                      <div className="flex items-center gap-2">
-                        <Input
-                          type="number"
-                          name="numDays"
-                          value={formData.numDays}
-                          onChange={handleInputChange}
-                          min="1"
-                          max="365"
-                          className="flex-1 bg-white/70 border-purple-200 focus:border-purple-500"
-                          required
-                        />
-                        <span className="text-sm font-medium text-gray-600">
-                          days
-                        </span>
-                      </div>
-                    </div>
+                    <Input
+                      type="number"
+                      name="numDays"
+                      value={formData.numDays}
+                      onChange={handleInputChange}
+                      min={1}
+                      max={365}
+                      placeholder="Days available"
+                      required
+                    />
 
-                    {/* Topics Count */}
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Number of Topics
-                      </label>
-                      <Input
-                        type="number"
-                        name="topicsLength"
-                        value={formData.topicsLength}
-                        onChange={handleInputChange}
-                        min="1"
-                        max="20"
-                        className="w-full bg-white/70 border-purple-200 focus:border-purple-500"
-                      />
-                    </div>
+                    <Input
+                      type="number"
+                      name="topicsLength"
+                      value={formData.topicsLength}
+                      onChange={handleInputChange}
+                      min={1}
+                      max={20}
+                      placeholder="Number of topics"
+                    />
 
-                    {/* Difficulty */}
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Difficulty Level
-                      </label>
-                      <select
-                        name="difficulty"
-                        value={formData.difficulty}
-                        onChange={handleInputChange}
-                        className="w-full px-3 py-2 border border-purple-200 rounded-lg bg-white/70 focus:outline-none focus:ring-2 focus:ring-purple-500 font-medium"
-                      >
-                        <option value="easy">Easy (3-4 hours/day)</option>
-                        <option value="medium">Medium (4-6 hours/day)</option>
-                        <option value="hard">Hard (6-8 hours/day)</option>
-                      </select>
-                    </div>
+                    <select
+                      name="difficulty"
+                      value={formData.difficulty}
+                      onChange={handleInputChange}
+                      className="w-full rounded-lg border border-purple-200 bg-white/70 px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500"
+                    >
+                      <option value="easy">Easy (3–4 hrs/day)</option>
+                      <option value="medium">Medium (4–6 hrs/day)</option>
+                      <option value="hard">Hard (6–8 hrs/day)</option>
+                    </select>
 
-                    {/* Submit Button */}
                     <Button
                       type="submit"
                       disabled={loading}
-                      className="w-full bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-2 rounded-lg transition-all duration-300 disabled:opacity-50"
+                      className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:scale-[1.02] transition"
                     >
                       {loading ? (
-                        <div className="flex items-center gap-2">
+                        <span className="flex items-center gap-2">
                           <Loader2 className="w-4 h-4 animate-spin" />
-                          Generating...
-                        </div>
+                          Generating…
+                        </span>
                       ) : (
-                        <div className="flex items-center gap-2">
+                        <span className="flex items-center gap-2">
                           <Sparkles className="w-4 h-4" />
                           Generate Plan
-                        </div>
+                        </span>
                       )}
                     </Button>
                   </form>
@@ -298,7 +274,7 @@ export default function StudyPlannerPage() {
             </motion.div>
           </motion.div>
 
-          {/* Results Section */}
+          {/* Results */}
           <motion.div
             className="lg:col-span-2"
             variants={containerVariants}
@@ -308,13 +284,11 @@ export default function StudyPlannerPage() {
             {error && (
               <motion.div variants={itemVariants}>
                 <Card className="border-red-200 bg-red-50">
-                  <CardContent className="pt-6">
-                    <div className="flex gap-3">
-                      <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
-                      <div>
-                        <h3 className="font-semibold text-red-900">Error</h3>
-                        <p className="text-sm text-red-800 mt-1">{error}</p>
-                      </div>
+                  <CardContent className="pt-6 flex gap-3">
+                    <AlertCircle className="w-5 h-5 text-red-600 mt-0.5" />
+                    <div>
+                      <p className="font-semibold text-red-900">Error</p>
+                      <p className="text-sm text-red-800">{error}</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -323,7 +297,7 @@ export default function StudyPlannerPage() {
 
             {plan && (
               <motion.div variants={itemVariants}>
-                <Card className="border-purple-200/50 shadow-lg">
+                <Card className="glass-card border-purple-200/60">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <CheckCircle className="w-5 h-5 text-green-600" />
@@ -331,74 +305,13 @@ export default function StudyPlannerPage() {
                     </CardTitle>
                     <CardDescription>
                       {formData.exam} • {formData.subject} • {formData.numDays}{" "}
-                      days • {formData.difficulty} level
+                      days
                     </CardDescription>
                   </CardHeader>
+
                   <CardContent>
-                    <div className="bg-linear-to-br from-purple-50 to-blue-50 p-6 rounded-lg border border-purple-200/50 prose prose-sm max-w-none">
-                      <ReactMarkdown
-                        components={{
-                          h1: ({ node, ...props }) => (
-                            <h1
-                              className="text-2xl font-bold text-purple-900 mt-6 mb-4 first:mt-0"
-                              {...props}
-                            />
-                          ),
-                          h2: ({ node, ...props }) => (
-                            <h2
-                              className="text-xl font-bold text-purple-800 mt-5 mb-3"
-                              {...props}
-                            />
-                          ),
-                          h3: ({ node, ...props }) => (
-                            <h3
-                              className="text-lg font-semibold text-purple-700 mt-4 mb-2"
-                              {...props}
-                            />
-                          ),
-                          p: ({ node, ...props }) => (
-                            <p
-                              className="text-gray-700 mb-3 leading-relaxed"
-                              {...props}
-                            />
-                          ),
-                          ul: ({ node, ...props }) => (
-                            <ul
-                              className="list-disc list-inside space-y-1 mb-3 text-gray-700"
-                              {...props}
-                            />
-                          ),
-                          ol: ({ node, ...props }) => (
-                            <ol
-                              className="list-decimal list-inside space-y-1 mb-3 text-gray-700"
-                              {...props}
-                            />
-                          ),
-                          li: ({ node, ...props }) => (
-                            <li className="text-gray-700" {...props} />
-                          ),
-                          blockquote: ({ node, ...props }) => (
-                            <blockquote
-                              className="border-l-4 border-purple-500 pl-4 py-2 italic text-gray-600 my-3"
-                              {...props}
-                            />
-                          ),
-                          strong: ({ node, ...props }) => (
-                            <strong
-                              className="font-bold text-purple-900"
-                              {...props}
-                            />
-                          ),
-                          code: ({ node, ...props }) => (
-                            <code
-                              className="bg-purple-100 text-purple-900 px-2 py-1 rounded text-sm"
-                              {...props}
-                            />
-                          ),
-                        }}
-                      >
-                        {plan}
-                      </ReactMarkdown>
+                    <div className="rounded-xl border border-purple-200/50 bg-gradient-to-br from-purple-50 to-blue-50 p-6 prose prose-sm max-w-none">
+                      <ReactMarkdown>{plan}</ReactMarkdown>
                     </div>
                   </CardContent>
                 </Card>
@@ -407,23 +320,16 @@ export default function StudyPlannerPage() {
 
             {!plan && !error && (
               <motion.div variants={itemVariants}>
-                <Card className="border-dashed border-purple-300 bg-purple-50/50">
-                  <CardContent className="pt-12 pb-12">
-                    <div className="text-center">
-                      <div className="flex justify-center mb-4">
-                        <div className="p-4 bg-purple-100 rounded-full">
-                          <BookOpen className="w-8 h-8 text-purple-600" />
-                        </div>
-                      </div>
-                      <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                        Generate Your Study Plan
-                      </h3>
-                      <p className="text-gray-600 max-w-sm mx-auto">
-                        Fill in your exam details on the left to generate a
-                        personalized study plan with day-by-day breakdown,
-                        resources, and tips.
-                      </p>
-                    </div>
+                <Card className="border-dashed border-purple-300 bg-purple-50/60">
+                  <CardContent className="py-16 text-center">
+                    <BookOpen className="w-10 h-10 mx-auto mb-4 text-purple-500" />
+                    <p className="font-medium text-gray-700">
+                      Fill the form to generate your plan
+                    </p>
+                    <p className="text-sm text-gray-600 max-w-sm mx-auto mt-2">
+                      You’ll get a realistic, revision-friendly schedule
+                      tailored to your exam and difficulty level.
+                    </p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -431,47 +337,32 @@ export default function StudyPlannerPage() {
           </motion.div>
         </div>
 
-        {/* Features Section */}
+        {/* Features */}
         <motion.div
-          className="mt-16"
+          className="mt-20"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
         >
-          <h2 className="text-3xl font-bold text-gray-900 mb-8">
-            What You'll Get
-          </h2>
+          <h2 className="text-3xl font-bold mb-10">What You’ll Get</h2>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               {
                 icon: Calendar,
-                title: "Day-wise Breakdown",
-                desc: "Topics organized by day with time allocation",
+                t: "Day-wise Breakdown",
+                d: "Clear daily tasks",
               },
-              {
-                icon: Target,
-                title: "Focused Goals",
-                desc: "Clear daily targets and revision schedules",
-              },
-              {
-                icon: Zap,
-                title: "Expert Tips",
-                desc: "Study strategies tailored to your difficulty level",
-              },
-              {
-                icon: Clock,
-                title: "Time Management",
-                desc: "Realistic time allocations for each topic",
-              },
-            ].map((feature, idx) => (
-              <motion.div key={idx} variants={cardVariants}>
-                <Card className="border-purple-200/50 hover:shadow-lg transition-all">
+              { icon: Target, t: "Focused Goals", d: "Priority-driven topics" },
+              { icon: Zap, t: "Expert Tips", d: "Exam-oriented strategy" },
+              { icon: Clock, t: "Time Management", d: "Realistic schedules" },
+            ].map((f, i) => (
+              <motion.div key={i} variants={cardVariants}>
+                <Card className="glass-card border-purple-200/60 hover:shadow-lg transition">
                   <CardContent className="pt-6">
-                    <feature.icon className="w-8 h-8 text-purple-600 mb-3" />
-                    <h3 className="font-semibold text-gray-900 mb-2">
-                      {feature.title}
-                    </h3>
-                    <p className="text-sm text-gray-600">{feature.desc}</p>
+                    <f.icon className="w-8 h-8 text-purple-600 mb-3" />
+                    <h3 className="font-semibold mb-1">{f.t}</h3>
+                    <p className="text-sm text-gray-600">{f.d}</p>
                   </CardContent>
                 </Card>
               </motion.div>
