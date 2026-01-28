@@ -79,6 +79,7 @@ export default function StudyPlannerPage() {
 	const [loading, setLoading] = useState(false);
 	const [plan, setPlan] = useState<StudyPlanSubsections | null>(null);
 	const [error, setError] = useState<string | null>(null);
+	const [saving, setSaving] = useState(false);
 
 	/* ---------- GSAP page entrance ---------- */
 	useEffect(() => {
@@ -89,15 +90,37 @@ export default function StudyPlannerPage() {
 		);
 	}, []);
 
-	useEffect(() => {
-		console.log(plan);
-	}, [plan]);
-
 	const handleInputChange = (
 		e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
 	) => {
 		const { name, value } = e.target;
 		setFormData((prev) => ({ ...prev, [name]: value }));
+	};
+
+	const savePlan = async () => {
+		try {
+			setSaving(true);
+			const response = await fetch('/api/save-study-plan', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(plan),
+			});
+
+			const data = await response.json();
+
+			if (!data.success) {
+				throw new Error(data.error || 'Internal Server Error');
+			}
+
+			toast({ title: 'Saved', description: 'Plan was saved successfully.' });
+			setPlan(null);
+		} catch (error) {
+			const msg = error instanceof Error ? error.message : 'An error occurred!';
+			setError(msg);
+			toast({ title: 'Error', description: msg, variant: 'destructive' });
+		} finally {
+			setSaving(false);
+		}
 	};
 
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -339,6 +362,24 @@ export default function StudyPlannerPage() {
 										<div className="rounded-xl border border-purple-200/50 bg-gradient-to-br from-purple-50 to-blue-50 p-6 prose prose-sm max-w-none">
 											<ReactMarkdown>{plan.generalInfo}</ReactMarkdown>
 										</div>
+										<Button
+											type="submit"
+											disabled={saving}
+											onClick={savePlan}
+											className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:scale-[1.02] transition"
+										>
+											{saving ? (
+												<span className="flex items-center gap-2">
+													<Loader2 className="w-4 h-4 animate-spin" />
+													Saving...
+												</span>
+											) : (
+												<span className="flex items-center gap-2">
+													<Sparkles className="w-4 h-4" />
+													Save Plan
+												</span>
+											)}
+										</Button>
 									</CardContent>
 								</Card>
 							</motion.div>
