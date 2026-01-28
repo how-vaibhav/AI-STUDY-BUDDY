@@ -4,15 +4,15 @@ export const POST = async (request: Request) => {
 	try {
 		const supabase = await createClient();
 		const body = await request.json();
-		const { generalInfo, dailyRoutines } = body;
+		const { generalInfo, dailyRoutines, title } = body;
 
 		const structuredRoutine = dailyRoutines.map(
 			(content: string, index: number) => {
-				const title = content.split('\n')[0].trim();
+				const header = content.split('\n')[0].trim();
 
 				return {
 					day_number: index + 1,
-					title: title,
+					title: header,
 					content: content,
 					is_completed: false,
 					completed_at: null,
@@ -22,7 +22,11 @@ export const POST = async (request: Request) => {
 
 		const { data: PlanData, error: PlanError } = await supabase
 			.from('studyPlans')
-			.insert({ info: generalInfo, daily_routines: structuredRoutine });
+			.insert({
+				info: generalInfo,
+				daily_routines: structuredRoutine,
+				title: title,
+			});
 
 		if (PlanError)
 			return Response.json(

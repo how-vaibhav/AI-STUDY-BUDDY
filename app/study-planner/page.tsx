@@ -80,6 +80,7 @@ export default function StudyPlannerPage() {
 	const [plan, setPlan] = useState<StudyPlanSubsections | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [saving, setSaving] = useState(false);
+	const [title, setTitle] = useState('');
 
 	/* ---------- GSAP page entrance ---------- */
 	useEffect(() => {
@@ -100,10 +101,16 @@ export default function StudyPlannerPage() {
 	const savePlan = async () => {
 		try {
 			setSaving(true);
+
+			const payload = {
+				...plan,
+				title: title,
+			};
+
 			const response = await fetch('/api/save-study-plan', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(plan),
+				body: JSON.stringify(payload),
 			});
 
 			const data = await response.json();
@@ -163,6 +170,11 @@ export default function StudyPlannerPage() {
 			}
 
 			setPlan(data.studyPlanSubsections);
+
+			setTitle(
+				`${formData.subject} Routine for ${formData.exam} in ${formData.numDays} days.`,
+			);
+
 			toast({
 				title: 'Success',
 				description: 'Study plan generated successfully',
