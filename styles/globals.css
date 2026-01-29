@@ -1,5 +1,5 @@
-@import 'tailwindcss';
-@import 'tw-animate-css';
+@import "tailwindcss";
+@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -75,8 +75,8 @@
 }
 
 @theme inline {
-  --font-sans: 'Geist', 'Geist Fallback';
-  --font-mono: 'Geist Mono', 'Geist Mono Fallback';
+  --font-sans: "Geist", "Geist Fallback";
+  --font-mono: "Geist Mono", "Geist Mono Fallback";
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -122,4 +122,35 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Decorative floating blobs used on the welcome page */
+.floating-blob {
+  position: absolute;
+  filter: blur(48px) saturate(120%);
+  opacity: 0.28;
+  transform: translateZ(0);
+  will-change: transform, opacity;
+}
+
+@keyframes floaty {
+  0% {
+    transform: translateY(0) translateX(0) scale(1);
+  }
+  50% {
+    transform: translateY(-18px) translateX(6px) scale(1.04);
+  }
+  100% {
+    transform: translateY(0) translateX(0) scale(1);
+  }
+}
+
+.blob-1 {
+  animation: floaty 8s ease-in-out infinite;
+}
+.blob-2 {
+  animation: floaty 10s ease-in-out infinite;
+}
+.blob-3 {
+  animation: floaty 12s ease-in-out infinite;
 }

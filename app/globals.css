@@ -158,7 +158,7 @@
 }
 
 .glass-card:hover {
-  @apply shadow-xl -translate-y-[1px];
+  @apply shadow-xl -translate-y-px;
 }
 
 /* ---------------------------------------------

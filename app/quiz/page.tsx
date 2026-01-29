@@ -4,7 +4,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { gsap } from "gsap";
-import { DashboardNav } from "@/components/dashboard-nav";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -47,12 +46,12 @@ interface Quiz {
 }
 
 const AVAILABLE_TOPICS = [
-  { label: 'Oscillation', value: 'oscillation' },
-  { label: 'Doppler Effect', value: 'doppler effect' },
-  { label: 'Calculus', value: 'calculus' },
-  { label: 'Algebra', value: 'algebra' },
-  { label: 'Atomic Structure', value: 'atomic structure' },
-  { label: 'Genetics', value: 'genetics' },
+  { label: "Oscillation", value: "oscillation" },
+  { label: "Doppler Effect", value: "doppler effect" },
+  { label: "Calculus", value: "calculus" },
+  { label: "Algebra", value: "algebra" },
+  { label: "Atomic Structure", value: "atomic structure" },
+  { label: "Genetics", value: "genetics" },
 ];
 
 export default function QuizPage() {
@@ -64,7 +63,7 @@ export default function QuizPage() {
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [selectedQuiz, setSelectedQuiz] = useState<Quiz | null>(null);
   const [showTopicModal, setShowTopicModal] = useState(false);
-  const [selectedTopic, setSelectedTopic] = useState('oscillation');
+  const [selectedTopic, setSelectedTopic] = useState("oscillation");
   const [totalStreak, setTotalStreak] = useState(7);
   const [totalAccuracy, setTotalAccuracy] = useState(81);
 
@@ -137,17 +136,18 @@ export default function QuizPage() {
       gsap.fromTo(
         containerRef.current,
         { opacity: 0, y: 24 },
-        { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }
+        { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" },
       );
     }
   }, [loading]);
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-slate-900">
-        <DashboardNav />
+      <div className="min-h-screen bg-linear-to-br from-indigo-50 via-purple-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-slate-900">
         <div className="flex items-center justify-center h-[calc(100vh-64px)]">
-          <p className="text-muted-foreground animate-pulse">Loading quizzes…</p>
+          <p className="text-muted-foreground animate-pulse">
+            Loading quizzes…
+          </p>
         </div>
       </div>
     );
@@ -160,21 +160,19 @@ export default function QuizPage() {
           quizzes
             .filter((q) => q.completed && q.score)
             .reduce((acc, q) => acc + (q.score || 0), 0) /
-            quizzes.filter((q) => q.completed && q.score).length
+            quizzes.filter((q) => q.completed && q.score).length,
         )
       : 0;
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-indigo-50 via-purple-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-slate-900">
-      <DashboardNav />
-
+    <div className="relative min-h-screen overflow-hidden bg-linear-to-br from-indigo-50 via-purple-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-slate-900">
       <main
         ref={containerRef}
         className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10"
       >
         {/* Header */}
         <div className="mb-10">
-          <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-indigo-700 to-purple-600 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent mb-2">
+          <h1 className="text-4xl font-bold tracking-tight bg-linear-to-r from-indigo-700 to-purple-600 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent mb-2">
             Daily Quizzes 🎓
           </h1>
           <p className="text-muted-foreground">
@@ -217,7 +215,7 @@ export default function QuizPage() {
                         {stat.label}
                       </p>
                       <p
-                        className={`text-3xl font-bold mt-2 bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}
+                        className={`text-3xl font-bold mt-2 bg-linear-to-r ${stat.color} bg-clip-text text-transparent`}
                       >
                         {stat.value}
                       </p>
@@ -284,7 +282,7 @@ export default function QuizPage() {
                                 setShowTopicModal(true);
                               } else {
                                 router.push(
-                                  `/quiz/take?id=${quiz.id}&day=${quiz.day}`
+                                  `/quiz/take?id=${quiz.id}&day=${quiz.day}`,
                                 );
                               }
                             }
@@ -292,14 +290,14 @@ export default function QuizPage() {
                           className={`${
                             quiz.completed
                               ? "bg-emerald-600 hover:bg-emerald-700"
-                              : "bg-gradient-to-r from-indigo-600 to-purple-600"
+                              : "bg-linear-to-r from-indigo-600 to-purple-600"
                           }`}
                         >
                           {quiz.completed
                             ? "Review"
                             : quiz.unlocked
-                            ? "Start"
-                            : "Locked"}
+                              ? "Start"
+                              : "Locked"}
                         </Button>
                       </div>
                     </CardContent>
@@ -312,11 +310,13 @@ export default function QuizPage() {
             <Card className="glass-card border-blue-200/60 dark:border-blue-500/30 mt-6 bg-blue-50/50 dark:bg-blue-900/20">
               <CardContent className="pt-6">
                 <div className="flex gap-4">
-                  <AlertCircle className="w-6 h-6 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-1" />
+                  <AlertCircle className="w-6 h-6 text-blue-600 dark:text-blue-400 shrink-0 mt-1" />
                   <div>
                     <h4 className="font-bold mb-1">Progressive Unlocking</h4>
                     <p className="text-sm text-muted-foreground">
-                      Today's quiz is available. Future quizzes unlock as you complete previous ones. This helps you maintain a consistent learning schedule and build momentum!
+                      Today's quiz is available. Future quizzes unlock as you
+                      complete previous ones. This helps you maintain a
+                      consistent learning schedule and build momentum!
                     </p>
                   </div>
                 </div>
@@ -393,7 +393,8 @@ export default function QuizPage() {
                     Today's Quiz Unlocked!
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Complete it to unlock tomorrow's quiz and maintain your streak.
+                    Complete it to unlock tomorrow's quiz and maintain your
+                    streak.
                   </p>
                 </div>
               </CardContent>
@@ -407,10 +408,11 @@ export default function QuizPage() {
             <DialogHeader>
               <DialogTitle>Select Quiz Topic</DialogTitle>
               <DialogDescription>
-                Choose a topic to start your quiz. You'll get 5 questions on this topic.
+                Choose a topic to start your quiz. You'll get 5 questions on
+                this topic.
               </DialogDescription>
             </DialogHeader>
-            
+
             <div className="grid grid-cols-2 gap-3 py-4">
               {AVAILABLE_TOPICS.map((topic) => (
                 <button
@@ -418,8 +420,8 @@ export default function QuizPage() {
                   onClick={() => setSelectedTopic(topic.value)}
                   className={`p-3 rounded-lg border-2 transition-all text-sm font-medium ${
                     selectedTopic === topic.value
-                      ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400'
-                      : 'border-slate-200 dark:border-slate-700 hover:border-indigo-400 dark:hover:border-indigo-400'
+                      ? "border-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400"
+                      : "border-slate-200 dark:border-slate-700 hover:border-indigo-400 dark:hover:border-indigo-400"
                   }`}
                 >
                   {topic.label}
@@ -439,12 +441,12 @@ export default function QuizPage() {
                 onClick={() => {
                   if (selectedQuiz) {
                     router.push(
-                      `/quiz/take?id=${selectedQuiz.id}&day=${selectedQuiz.day}&topic=${selectedTopic}`
+                      `/quiz/take?id=${selectedQuiz.id}&day=${selectedQuiz.day}&topic=${selectedTopic}`,
                     );
                   }
                   setShowTopicModal(false);
                 }}
-                className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600"
+                className="flex-1 bg-linear-to-r from-indigo-600 to-purple-600"
               >
                 Start Quiz
               </Button>

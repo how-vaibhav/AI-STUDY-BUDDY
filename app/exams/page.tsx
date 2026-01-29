@@ -4,7 +4,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { MouseParallax } from "react-just-parallax";
 
-import { DashboardNav } from "@/components/dashboard-nav";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -115,13 +114,11 @@ export default function ExamsPage() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-indigo-50 via-purple-50 to-blue-50">
-      <DashboardNav />
-
+    <div className="relative min-h-screen overflow-hidden bg-linear-to-br from-indigo-50 via-purple-50 to-blue-50">
       {/* Ambient background */}
       <MouseParallax strength={0.03} enableOnTouchDevice={false}>
-        <div className="absolute -top-40 -left-40 h-[28rem] w-[28rem] rounded-full bg-indigo-300/20 blur-3xl" />
-        <div className="absolute -bottom-40 -right-40 h-[28rem] w-[28rem] rounded-full bg-purple-300/20 blur-3xl" />
+        <div className="absolute -top-40 -left-40 h-112 w-112 rounded-full bg-indigo-300/20 blur-3xl" />
+        <div className="absolute -bottom-40 -right-40 h-112 w-112 rounded-full bg-purple-300/20 blur-3xl" />
       </MouseParallax>
 
       <main
@@ -131,7 +128,7 @@ export default function ExamsPage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-10">
           <div>
-            <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-indigo-700 to-purple-600 bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold tracking-tight bg-linear-to-r from-indigo-700 to-purple-600 bg-clip-text text-transparent">
               My Exams
             </h1>
             <p className="text-muted-foreground mt-2">
@@ -141,7 +138,7 @@ export default function ExamsPage() {
 
           <Button
             onClick={() => setShowForm(!showForm)}
-            className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white gap-2 hover:scale-[1.02] transition"
+            className="bg-linear-to-r from-indigo-600 to-purple-600 text-white gap-2 hover:scale-[1.02] transition"
           >
             <Plus size={18} />
             Add Exam

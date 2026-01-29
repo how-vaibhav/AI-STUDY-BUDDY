@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { AppFooter } from "@/components/app-footer";
+import ConditionalNav from "@/components/conditional-nav";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
@@ -50,7 +51,7 @@ export default function RootLayout({
           font-sans
           antialiased
           text-foreground
-          bg-gradient-to-br
+          bg-linear-to-br
           from-background
           via-muted/30
           to-background
@@ -62,6 +63,8 @@ export default function RootLayout({
         "
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          {/* Global navbar visible on all pages (hidden on /welcome) */}
+          <ConditionalNav />
           {/* Main app content */}
           <main className="flex-1">{children}</main>
 

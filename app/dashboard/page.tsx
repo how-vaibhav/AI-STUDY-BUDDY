@@ -6,7 +6,6 @@ import Link from "next/link";
 import { gsap } from "gsap";
 import { MouseParallax } from "react-just-parallax";
 
-import { DashboardNav } from "@/components/dashboard-nav";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -112,13 +111,13 @@ export default function DashboardPage() {
         .single();
 
       setUser(data || session.user);
-      
+
       // Simulate loading user stats from localStorage
       const savedStats = localStorage.getItem("userStats");
       if (savedStats) {
         setStats(JSON.parse(savedStats));
       }
-      
+
       setLoading(false);
     };
 
@@ -127,8 +126,7 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-slate-900">
-        <DashboardNav />
+      <div className="min-h-screen bg-linear-to-br from-indigo-50 via-purple-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-slate-900">
         <div className="flex items-center justify-center h-[calc(100vh-64px)]">
           <p className="text-muted-foreground animate-pulse">
             Loading dashboard…
@@ -139,13 +137,11 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-indigo-50 via-purple-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-slate-900">
-      <DashboardNav />
-
+    <div className="relative min-h-screen overflow-hidden bg-linear-to-br from-indigo-50 via-purple-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-slate-900">
       {/* Ambient parallax background */}
       <MouseParallax strength={0.03} enableOnTouchDevice={false}>
-        <div className="absolute -top-40 -left-40 h-[30rem] w-[30rem] rounded-full bg-indigo-300/20 blur-3xl dark:bg-indigo-500/10" />
-        <div className="absolute -bottom-40 -right-40 h-[30rem] w-[30rem] rounded-full bg-purple-300/20 blur-3xl dark:bg-purple-500/10" />
+        <div className="absolute -top-40 -left-40 h-120 w-120 rounded-full bg-indigo-300/20 blur-3xl dark:bg-indigo-500/10" />
+        <div className="absolute -bottom-40 -right-40 h-120 w-120 rounded-full bg-purple-300/20 blur-3xl dark:bg-purple-500/10" />
       </MouseParallax>
 
       <main
@@ -154,7 +150,7 @@ export default function DashboardPage() {
       >
         {/* Welcome */}
         <div className="mb-8 md:mb-10">
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight bg-gradient-to-r from-indigo-700 to-purple-600 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent">
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight bg-linear-to-r from-indigo-700 to-purple-600 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent">
             Welcome back, {user?.full_name || "Student"} 👋
           </h1>
           <p className="text-muted-foreground mt-2">
@@ -200,12 +196,14 @@ export default function DashboardPage() {
                     <p className="text-sm text-muted-foreground">
                       {metric.title}
                     </p>
-                    <p className={`text-2xl md:text-3xl font-bold mt-2 bg-gradient-to-r ${metric.color} bg-clip-text text-transparent`}>
+                    <p
+                      className={`text-2xl md:text-3xl font-bold mt-2 bg-linear-to-r ${metric.color} bg-clip-text text-transparent`}
+                    >
                       {metric.value}
                     </p>
                   </div>
                   <div
-                    className={`p-3 rounded-lg bg-gradient-to-br ${metric.color} bg-opacity-10`}
+                    className={`p-3 rounded-lg bg-linear-to-br ${metric.color} bg-opacity-10`}
                   >
                     <metric.icon className="w-5 h-5 md:w-6 md:h-6 text-indigo-600 dark:text-indigo-400" />
                   </div>
@@ -297,7 +295,11 @@ export default function DashboardPage() {
                     <XAxis dataKey="subject" />
                     <YAxis />
                     <Tooltip />
-                    <Bar dataKey="correct" fill="#6366f1" radius={[8, 8, 0, 0]} />
+                    <Bar
+                      dataKey="correct"
+                      fill="#6366f1"
+                      radius={[8, 8, 0, 0]}
+                    />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -307,7 +309,7 @@ export default function DashboardPage() {
           {/* Quick Stats & Actions */}
           <div className="space-y-6">
             {/* Streak Card */}
-            <Card className="glass-card border-indigo-200/60 dark:border-purple-500/30 bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-950 dark:to-red-950">
+            <Card className="glass-card border-indigo-200/60 dark:border-purple-500/30 bg-linear-to-br from-orange-50 to-red-50 dark:from-orange-950 dark:to-red-950">
               <CardHeader className="pb-3">
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Zap className="w-5 h-5 text-orange-600 dark:text-orange-400" />
@@ -325,14 +327,14 @@ export default function DashboardPage() {
             </Card>
 
             {/* Motivational Card */}
-            <Card className="glass-card border-indigo-200/60 dark:border-purple-500/30 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950 dark:to-teal-950">
+            <Card className="glass-card border-indigo-200/60 dark:border-purple-500/30 bg-linear-to-br from-emerald-50 to-teal-50 dark:from-emerald-950 dark:to-teal-950">
               <CardHeader className="pb-3">
                 <CardTitle className="text-lg">Today's Goal</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                   <div
-                    className="bg-gradient-to-r from-emerald-600 to-teal-600 h-2 rounded-full"
+                    className="bg-linear-to-r from-emerald-600 to-teal-600 h-2 rounded-full"
                     style={{ width: "65%" }}
                   ></div>
                 </div>
@@ -346,7 +348,9 @@ export default function DashboardPage() {
 
         {/* Quick Actions */}
         <div className="mt-8 mb-8">
-          <h2 className="text-2xl font-bold mb-4 dark:text-white">Quick Actions</h2>
+          <h2 className="text-2xl font-bold mb-4 dark:text-white">
+            Quick Actions
+          </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
               {
@@ -379,16 +383,20 @@ export default function DashboardPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <div
-                        className={`p-2 rounded-lg bg-gradient-to-br ${action.color} bg-opacity-10`}
+                        className={`p-2 rounded-lg bg-linear-to-br ${action.color} bg-opacity-10`}
                       >
-                        <action.icon className={`w-5 h-5 bg-gradient-to-r ${action.color} bg-clip-text text-transparent`} />
+                        <action.icon
+                          className={`w-5 h-5 bg-linear-to-r ${action.color} bg-clip-text text-transparent`}
+                        />
                       </div>
                       {action.title}
                     </CardTitle>
                     <CardDescription>{action.desc}</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <Button className={`w-full bg-gradient-to-r ${action.color} text-white hover:scale-[1.02] transition`}>
+                    <Button
+                      className={`w-full bg-linear-to-r ${action.color} text-white hover:scale-[1.02] transition`}
+                    >
                       {action.cta}
                     </Button>
                   </CardContent>

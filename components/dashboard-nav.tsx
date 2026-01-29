@@ -48,11 +48,11 @@ export function DashboardNav() {
 
   const fetchNotifications = async () => {
     try {
-      const response = await fetch('/api/send-notification');
+      const response = await fetch("/api/send-notification");
       const data = await response.json();
       setUnreadCount(data.unreadCount || 0);
     } catch (error) {
-      console.error('Error fetching notifications:', error);
+      console.error("Error fetching notifications:", error);
     }
   };
 
@@ -105,9 +105,9 @@ export function DashboardNav() {
       {/* ================= NAVBAR ================= */}
       <nav
         className="
-          sticky top-0 z-[50]
+          sticky top-0 z-50
           border-b
-          bg-gradient-to-r
+          bg-linear-to-r
           from-indigo-100/95 via-white/95 to-blue-100/95
           dark:from-[#0b1020]/95 dark:via-[#101a35]/95 dark:to-[#0b1020]/95
           backdrop-blur-xl
@@ -121,7 +121,7 @@ export function DashboardNav() {
             pointer-events-none
             absolute inset-0 z-0
             -left-[20%] w-[140%]
-            bg-gradient-to-r
+            bg-linear-to-r
             from-indigo-500/30 via-purple-500/30 to-blue-500/30
             blur-3xl
           "
@@ -133,14 +133,19 @@ export function DashboardNav() {
             {/* Logo */}
             <Link
               href="/dashboard"
-              className="flex items-center gap-3 font-bold"
+              className="flex items-center gap-2 font-bold"
             >
-              <div className="p-2 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 text-white shadow-lg">
-                <BookOpen size={18} />
+              <div className="p-2 rounded-xl bg-linear-to-br from-indigo-600 to-purple-600 text-white shadow-lg">
+                <Brain size={18} />
               </div>
-              <span className="hidden sm:inline text-lg text-foreground">
-                AI Study Buddy
-              </span>
+              <div className="flex flex-col leading-none">
+                <span className="hidden sm:inline text-lg text-foreground">
+                  Cerevia
+                </span>
+                <span className="text-xs text-muted-foreground hidden sm:inline">
+                  The Path to Understanding
+                </span>
+              </div>
             </Link>
 
             {/* Desktop Nav */}
@@ -178,7 +183,7 @@ export function DashboardNav() {
                 <Bell size={18} />
                 {unreadCount > 0 && (
                   <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
-                    {unreadCount > 9 ? '9+' : unreadCount}
+                    {unreadCount > 9 ? "9+" : unreadCount}
                   </span>
                 )}
               </Button>
@@ -204,13 +209,13 @@ export function DashboardNav() {
               <div className="relative">
                 <button
                   onClick={() => setProfileOpen(!profileOpen)}
-                  className="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-600 to-purple-600 text-white font-semibold shadow-lg hover:scale-110 transition-transform duration-300 flex items-center justify-center ring-2 ring-indigo-400/50"
+                  className="h-10 w-10 rounded-full bg-linear-to-br from-indigo-600 to-purple-600 text-white font-semibold shadow-lg hover:scale-110 transition-transform duration-300 flex items-center justify-center ring-2 ring-indigo-400/50"
                 >
                   U
                 </button>
 
                 {profileOpen && (
-                  <div className="absolute right-0 mt-2 w-44 glass-card z-[80]">
+                  <div className="absolute right-0 mt-2 w-44 glass-card z-80">
                     <button
                       onClick={() => router.push("/profile")}
                       className="flex w-full items-center gap-2 px-4 py-2 text-sm hover:bg-muted"
@@ -249,7 +254,7 @@ export function DashboardNav() {
               <button
                 className="
                   md:hidden
-                  relative z-[60]
+                  relative z-60
                   p-2 rounded-lg
                   bg-primary/15
                   text-primary
@@ -267,18 +272,18 @@ export function DashboardNav() {
       {/* ================= MOBILE DRAWER ================= */}
       {mobileMenuOpen && (
         <RemoveScroll>
-          <div className="fixed inset-0 z-[100]">
+          <div className="fixed inset-0 z-100">
             {/* Overlay */}
             <div
               ref={overlayRef}
-              className="absolute inset-0 bg-black/50 opacity-0 z-[90]"
+              className="absolute inset-0 bg-black/50 opacity-0 z-90"
               onClick={() => setMobileMenuOpen(false)}
             />
 
             {/* Drawer */}
             <div
               ref={drawerRef}
-              className="absolute right-0 top-0 h-full w-72 bg-background shadow-2xl z-[100] flex flex-col"
+              className="absolute right-0 top-0 h-full w-72 bg-background shadow-2xl z-100 flex flex-col"
             >
               <div className="flex items-center justify-between px-4 h-16 border-b">
                 <span className="font-semibold">Menu</span>

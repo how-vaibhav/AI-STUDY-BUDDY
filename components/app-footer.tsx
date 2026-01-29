@@ -45,7 +45,7 @@ export function AppFooter() {
           start: "top 80%",
           toggleActions: "play none none reverse",
         },
-      }
+      },
     );
 
     // Floating animation for icons
@@ -73,7 +73,7 @@ export function AppFooter() {
   const footerSections = [
     {
       title: "Product",
-      icon: Zap,
+      icon: Brain,
       links: [
         { label: "Dashboard", href: "/dashboard" },
         { label: "Study Planner", href: "/study-planner" },
@@ -82,48 +82,56 @@ export function AppFooter() {
       ],
     },
     {
-      title: "Features",
-      icon: Lightbulb,
+      title: "Research-Driven AI",
+      icon: Target,
       links: [
-        { label: "Daily Quizzes", href: "/quiz" },
-        { label: "Progress Analytics", href: "/dashboard" },
-        { label: "Video Recommendations", href: "/notes-summarizer" },
-        { label: "Study Plans", href: "/study-planner" },
+        { label: "Our Approach", href: "/about" },
+        { label: "Why Cerevia", href: "/about" },
+        { label: "Learning Science", href: "/about" },
+        { label: "Exam Coverage", href: "/exams" },
       ],
     },
     {
-      title: "Company",
-      icon: Users,
+      title: "For Students",
+      icon: BookOpen,
       links: [
-        { label: "About Us", href: "/about" },
-        { label: "Contact", href: "/contact" },
-        { label: "Blog", href: "/blog" },
-        { label: "Careers", href: "/careers" },
+        { label: "JEE/NEET Prep", href: "/study-planner" },
+        { label: "Learning Tips", href: "/about" },
+        { label: "Success Stories", href: "/about" },
+        { label: "Community", href: "/contact" },
       ],
     },
     {
-      title: "Legal",
+      title: "Trust & Privacy",
       icon: ShieldCheck,
       links: [
         { label: "Privacy Policy", href: "/privacy" },
         { label: "Terms of Service", href: "/terms" },
-        { label: "Cookie Policy", href: "/cookies" },
-        { label: "Support", href: "/support" },
+        { label: "Data Security", href: "/privacy" },
+        { label: "Support", href: "/contact" },
       ],
     },
   ];
 
   const socialLinks = [
-    { icon: Twitter, href: "https://twitter.com/aistudybuddy", label: "Twitter" },
-    { icon: Github, href: "https://github.com/aistudybuddy", label: "GitHub" },
-    { icon: Linkedin, href: "https://linkedin.com/company/aistudybuddy", label: "LinkedIn" },
-    { icon: Mail, href: "mailto:support@aistudybuddy.com", label: "Email" },
+    {
+      icon: Twitter,
+      href: "https://twitter.com/cerevia",
+      label: "Twitter",
+    },
+    { icon: Github, href: "https://github.com/cerevia", label: "GitHub" },
+    {
+      icon: Linkedin,
+      href: "https://linkedin.com/company/cerevia",
+      label: "LinkedIn",
+    },
+    { icon: Mail, href: "mailto:support@cerevia.com", label: "Email" },
   ];
 
   return (
     <footer
       ref={footerRef}
-      className="relative z-40 border-t border-border/60 bg-gradient-to-b from-white/80 via-indigo-50/40 to-white/80 dark:from-[#0b1020]/80 dark:via-purple-900/20 dark:to-[#0b1020]/80 backdrop-blur-xl overflow-hidden"
+      className="relative z-40 border-t border-border/60 bg-linear-to-b from-white/80 via-indigo-50/40 to-white/80 dark:from-[#0b1020]/80 dark:via-purple-900/20 dark:to-[#0b1020]/80 backdrop-blur-xl overflow-hidden"
     >
       {/* Animated background blobs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -138,18 +146,27 @@ export function AppFooter() {
           {/* Brand Story */}
           <div data-animate className="space-y-4">
             <div className="flex items-center gap-3 mb-4">
-              <div className="p-3 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 text-white shadow-lg" data-float>
+              <div
+                className="p-3 rounded-xl bg-linear-to-br from-indigo-600 to-purple-600 text-white shadow-lg"
+                data-float
+              >
                 <Brain size={24} />
               </div>
               <div>
-                <h3 className="text-xl font-bold bg-gradient-to-r from-indigo-700 to-purple-600 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent">
-                  AI Study Buddy
+                <h3 className="text-2xl font-bold bg-linear-to-r from-indigo-700 to-purple-600 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent">
+                  Cerevia
                 </h3>
-                <p className="text-xs text-muted-foreground">v2.0 - Advanced Learning</p>
+                <p className="text-xs text-muted-foreground">
+                  The Path to Understanding
+                </p>
               </div>
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
-              Empowering Indian students with AI-driven study tools. From competitive exams to board preparations, we're here to make learning smarter, faster, and more engaging.
+              Cerevia is built on the idea that learning is a process—not a
+              prompt. We're creating a new category of AI: one designed for
+              serious students, structured thinking, and cognitive mastery. From
+              JEE to UPSC, from boards to competitive exams, we help you build
+              deep understanding.
             </p>
             <div className="flex gap-3 pt-4">
               {socialLinks.map((social) => {
@@ -171,12 +188,16 @@ export function AppFooter() {
           </div>
 
           {/* Newsletter */}
-          <div data-animate className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-2xl p-8 border border-indigo-200/40 dark:border-indigo-500/30">
+          <div
+            data-animate
+            className="bg-linear-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-2xl p-8 border border-indigo-200/40 dark:border-indigo-500/30"
+          >
             <h4 className="text-lg font-bold mb-2 text-foreground">
-              Stay Updated 📧
+              Join the Cerevia Path 🧠
             </h4>
             <p className="text-sm text-muted-foreground mb-4">
-              Get weekly tips, new features, and exclusive content for students.
+              Get updates on new features, learning tips, and join thousands of
+              students mastering their exams.
             </p>
             <form onSubmit={handleSubscribe} className="space-y-3">
               <div className="flex gap-2">
@@ -190,10 +211,14 @@ export function AppFooter() {
                 />
                 <Button
                   type="submit"
-                  className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:scale-105 transition"
+                  className="bg-linear-to-r from-indigo-600 to-purple-600 hover:scale-105 transition"
                   size="icon"
                 >
-                  {subscribed ? <Heart size={18} fill="white" /> : <ArrowRight size={18} />}
+                  {subscribed ? (
+                    <Heart size={18} fill="white" />
+                  ) : (
+                    <ArrowRight size={18} />
+                  )}
                 </Button>
               </div>
               {subscribed && (
@@ -212,7 +237,10 @@ export function AppFooter() {
             return (
               <div key={section.title} data-animate className="space-y-4">
                 <div className="flex items-center gap-2 mb-4">
-                  <Icon size={18} className="text-indigo-600 dark:text-indigo-400" />
+                  <Icon
+                    size={18}
+                    className="text-indigo-600 dark:text-indigo-400"
+                  />
                   <h4 className="font-bold text-foreground">{section.title}</h4>
                 </div>
                 <ul className="space-y-2">
@@ -223,7 +251,10 @@ export function AppFooter() {
                         className="text-sm text-muted-foreground hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors inline-flex items-center group"
                       >
                         {link.label}
-                        <ArrowRight size={14} className="ml-1 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                        <ArrowRight
+                          size={14}
+                          className="ml-1 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all"
+                        />
                       </Link>
                     </li>
                   ))}
@@ -235,17 +266,22 @@ export function AppFooter() {
 
         {/* Bottom Section */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
-          <div data-animate className="flex items-center gap-2 flex-wrap justify-center sm:justify-start">
-            <span>© {new Date().getFullYear()} AI Study Buddy</span>
+          <div
+            data-animate
+            className="flex items-center gap-2 flex-wrap justify-center sm:justify-start"
+          >
+            <span>© {new Date().getFullYear()} Cerevia</span>
             <span className="hidden sm:inline">·</span>
             <span className="flex items-center gap-1">
-              Made with <Heart size={12} className="text-red-500" /> for Indian students 🇮🇳
+              Built for serious students, one path at a time 🧠
             </span>
           </div>
           <div data-animate className="flex items-center gap-3">
             <div className="flex items-center gap-1 px-3 py-1 bg-green-100/50 dark:bg-green-900/30 rounded-full">
               <div className="w-2 h-2 bg-green-600 dark:bg-green-400 rounded-full animate-pulse" />
-              <span className="text-green-700 dark:text-green-400 font-medium">All Systems Online</span>
+              <span className="text-green-700 dark:text-green-400 font-medium">
+                Learning Path Active
+              </span>
             </div>
           </div>
         </div>
