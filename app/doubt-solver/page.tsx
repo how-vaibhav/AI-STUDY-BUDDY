@@ -16,8 +16,10 @@ import {
 	CardTitle,
 } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { MessageCircle, Send, Lightbulb } from 'lucide-react';
+import { usePDFWorker } from '@/hooks/use-pdf-worker';
+import { MessageCircle, Send, Lightbulb, Upload, X, File } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import { processUploadedFile } from '@/lib/file-utils';
 
 interface currentDoubt {
 	id: string;
@@ -39,12 +41,26 @@ interface ApiResponse {
 	Doubts: doubts[];
 }
 
+interface UploadedFile {
+	id: string;
+	name: string;
+	type: string;
+	size: number;
+	content: string;
+	uploadedAt: number;
+}
+
 export default function DoubtSolverPage() {
 	const { toast } = useToast();
 	const [loading, setLoading] = useState(false);
 	const [currentDoubt, setCurrentDoubt] = useState<currentDoubt | null>(null);
 	const [doubts, setDoubts] = useState<doubts[]>([]);
+	const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+	const fileInputRef = useRef<HTMLInputElement>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
+
+	// Initialize PDF worker
+	usePDFWorker();
 
 	const [formData, setFormData] = useState({
 		question: '',
@@ -64,7 +80,21 @@ export default function DoubtSolverPage() {
 				console.error('Failed to fetch:', err);
 			}
 		};
+		
+		// Load uploaded files from localStorage
+		const loadUploadedFiles = () => {
+			try {
+				const stored = localStorage.getItem('doubt_solver_files');
+				if (stored) {
+					setUploadedFiles(JSON.parse(stored));
+				}
+			} catch (err) {
+				console.error('Failed to load uploaded files:', err);
+			}
+		};
+		
 		fetchDoubts();
+		loadUploadedFiles();
 	}, []);
 
 	useEffect(() => {
@@ -74,6 +104,100 @@ export default function DoubtSolverPage() {
 			{ opacity: 1, y: 0, duration: 0.9, ease: 'power3.out' },
 		);
 	}, []);
+
+	const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+		const files = e.target.files;
+		if (!files) return;
+
+		const maxSize = 50 * 1024 * 1024; // 50MB
+		const allowedTypes = ['application/pdf', 'image/png', 'text/plain'];
+
+		for (let i = 0; i < files.length; i++) {
+			const file = files[i];
+
+			// Validate file size
+			if (file.size > maxSize) {
+				toast({
+					title: 'Error',
+					description: `${file.name} exceeds 50MB limit`,
+					variant: 'destructive',
+				});
+				continue;
+			}
+
+			// Validate file type
+			if (!allowedTypes.includes(file.type)) {
+				toast({
+					title: 'Error',
+					description: `${file.name} is not a supported format (PDF, PNG, or TXT)`,
+					variant: 'destructive',
+				});
+				continue;
+			}
+
+			try {
+				const reader = new FileReader();
+				reader.onload = async (event) => {
+					try {
+						const rawContent = event.target?.result;
+						const processedContent = await processUploadedFile(file, rawContent as any);
+
+						const newFile: UploadedFile = {
+							id: `file_${Date.now()}_${i}`,
+							name: file.name,
+							type: file.type,
+							size: file.size,
+							content: processedContent,
+							uploadedAt: Date.now(),
+						};
+
+						setUploadedFiles((prev) => {
+							const updated = [...prev, newFile];
+							// Save to localStorage
+							localStorage.setItem('doubt_solver_files', JSON.stringify(updated));
+							return updated;
+						});
+
+						toast({
+							title: 'Success',
+							description: `${file.name} uploaded and processed successfully`,
+						});
+					} catch (err) {
+						toast({
+							title: 'Error',
+							description: `Failed to process ${file.name}: ${err instanceof Error ? err.message : 'Unknown error'}`,
+							variant: 'destructive',
+						});
+					}
+				};
+
+				if (file.type === 'application/pdf') {
+					reader.readAsArrayBuffer(file);
+				} else {
+					reader.readAsText(file);
+				}
+			} catch (err) {
+				toast({
+					title: 'Error',
+					description: `Failed to read ${file.name}`,
+					variant: 'destructive',
+				});
+			}
+		}
+
+		// Reset file input
+		if (fileInputRef.current) {
+			fileInputRef.current.value = '';
+		}
+	};
+
+	const removeFile = (fileId: string) => {
+		setUploadedFiles((prev) => {
+			const updated = prev.filter((f) => f.id !== fileId);
+			localStorage.setItem('doubt_solver_files', JSON.stringify(updated));
+			return updated;
+		});
+	};
 
 	const handleInputChange = (
 		e: React.ChangeEvent<
@@ -96,13 +220,31 @@ export default function DoubtSolverPage() {
 			return;
 		}
 
+		if (uploadedFiles.length === 0) {
+			toast({
+				title: 'Info',
+				description: 'Consider uploading reference files for better doubt solving',
+				variant: 'default',
+			});
+		}
+
 		setLoading(true);
 
 		try {
+			// Prepare file context with better formatting
+			const fileContext = uploadedFiles.length > 0 
+				? uploadedFiles
+					.map(f => `### ${f.name}\n${f.content}`)
+					.join('\n\n---\n\n')
+				: null;
+
 			const response = await fetch('/api/solve-doubt', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(formData),
+				body: JSON.stringify({
+					...formData,
+					fileContext: fileContext,
+				}),
 			});
 
 			const data = await response.json();
@@ -178,6 +320,68 @@ export default function DoubtSolverPage() {
 
 						<CardContent>
 							<form onSubmit={handleSubmit} className="space-y-4">
+								<div>
+									<label className="text-sm font-medium text-gray-700 mb-2 block">
+										Upload Reference Files (Optional)
+									</label>
+									<input
+										ref={fileInputRef}
+										type="file"
+										multiple
+										accept=".pdf,.png,.txt"
+										onChange={handleFileUpload}
+										className="hidden"
+										aria-label="Upload files"
+									/>
+									<Button
+										type="button"
+										onClick={() => fileInputRef.current?.click()}
+										className="w-full bg-purple-100 hover:bg-purple-200 text-purple-700 border border-purple-300"
+										variant="outline"
+									>
+										<Upload className="w-4 h-4 mr-2" />
+										Add Files (Max 50MB)
+									</Button>
+									<p className="text-xs text-gray-500 mt-1">
+										Supported: PDF, PNG, TXT
+									</p>
+								</div>
+
+								{uploadedFiles.length > 0 && (
+									<div className="space-y-2">
+										<p className="text-sm font-medium text-gray-700">
+											Uploaded Files ({uploadedFiles.length})
+										</p>
+										<div className="space-y-1 max-h-40 overflow-y-auto">
+											{uploadedFiles.map((file) => (
+												<div
+													key={file.id}
+													className="flex items-center justify-between p-2 bg-purple-50 rounded-lg border border-purple-200"
+												>
+													<div className="flex items-center gap-2 min-w-0">
+														<File className="w-4 h-4 text-purple-600 flex-shrink-0" />
+														<div className="min-w-0">
+															<p className="text-xs font-medium text-gray-700 truncate">
+																{file.name}
+															</p>
+															<p className="text-xs text-gray-500">
+																{(file.size / 1024).toFixed(1)} KB
+															</p>
+														</div>
+													</div>
+													<button
+														type="button"
+														onClick={() => removeFile(file.id)}
+														className="flex-shrink-0 p-1 hover:bg-purple-200 rounded transition"
+													>
+														<X className="w-4 h-4 text-purple-600" />
+													</button>
+												</div>
+											))}
+										</div>
+									</div>
+								)}
+
 								<textarea
 									name="question"
 									placeholder="Type your question here…"

@@ -16,8 +16,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { BookOpen, Download, Youtube, Play } from "lucide-react";
+import { usePDFWorker } from "@/hooks/use-pdf-worker";
+import { BookOpen, Download, Youtube, Play, Upload, X, File } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import { processUploadedFile } from "@/lib/file-utils";
 
 interface Summary {
   id: string;
@@ -33,12 +35,26 @@ interface Summary {
   }>;
 }
 
+interface UploadedFile {
+  id: string;
+  name: string;
+  type: string;
+  size: number;
+  content: string;
+  uploadedAt: number;
+}
+
 export default function NotesSummarizerPage() {
   const { toast } = useToast();
   const containerRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Initialize PDF worker
+  usePDFWorker();
 
   const [loading, setLoading] = useState(false);
   const [summaries, setSummaries] = useState<Summary[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [formData, setFormData] = useState({
     notes: "",
     subject: "",
@@ -52,6 +68,20 @@ export default function NotesSummarizerPage() {
       { opacity: 0, y: 28 },
       { opacity: 1, y: 0, duration: 0.9, ease: "power3.out" },
     );
+
+    // Load uploaded files from localStorage
+    const loadUploadedFiles = () => {
+      try {
+        const stored = localStorage.getItem('notes_summarizer_files');
+        if (stored) {
+          setUploadedFiles(JSON.parse(stored));
+        }
+      } catch (err) {
+        console.error('Failed to load uploaded files:', err);
+      }
+    };
+
+    loadUploadedFiles();
   }, []);
 
   const handleInputChange = (
@@ -63,13 +93,111 @@ export default function NotesSummarizerPage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    const maxSize = 50 * 1024 * 1024; // 50MB
+    const allowedTypes = ['application/pdf', 'image/png', 'text/plain'];
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+
+      // Validate file size
+      if (file.size > maxSize) {
+        toast({
+          title: 'Error',
+          description: `${file.name} exceeds 50MB limit`,
+          variant: 'destructive',
+        });
+        continue;
+      }
+
+      // Validate file type
+      if (!allowedTypes.includes(file.type)) {
+        toast({
+          title: 'Error',
+          description: `${file.name} is not a supported format (PDF, PNG, or TXT)`,
+          variant: 'destructive',
+        });
+        continue;
+      }
+
+      try {
+        const reader = new FileReader();
+        reader.onload = async (event) => {
+          try {
+            const rawContent = event.target?.result;
+            const processedContent = await processUploadedFile(file, rawContent as any);
+
+            const newFile: UploadedFile = {
+              id: `file_${Date.now()}_${i}`,
+              name: file.name,
+              type: file.type,
+              size: file.size,
+              content: processedContent,
+              uploadedAt: Date.now(),
+            };
+
+            setUploadedFiles((prev) => {
+              const updated = [...prev, newFile];
+              // Save to localStorage
+              localStorage.setItem('notes_summarizer_files', JSON.stringify(updated));
+              return updated;
+            });
+
+            toast({
+              title: 'Success',
+              description: `${file.name} uploaded and processed successfully`,
+            });
+          } catch (err) {
+            toast({
+              title: 'Error',
+              description: `Failed to process ${file.name}: ${err instanceof Error ? err.message : 'Unknown error'}`,
+              variant: 'destructive',
+            });
+          }
+        };
+
+        if (file.type === 'application/pdf') {
+          reader.readAsArrayBuffer(file);
+        } else {
+          reader.readAsText(file);
+        }
+      } catch (err) {
+        toast({
+          title: 'Error',
+          description: `Failed to read ${file.name}`,
+          variant: 'destructive',
+        });
+      }
+    }
+
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const removeFile = (fileId: string) => {
+    setUploadedFiles((prev) => {
+      const updated = prev.filter((f) => f.id !== fileId);
+      localStorage.setItem('notes_summarizer_files', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.notes.trim()) {
+    // Check if we have either notes or uploaded files
+    const hasNotes = formData.notes.trim().length > 0;
+    const hasFiles = uploadedFiles.length > 0;
+
+    if (!hasNotes && !hasFiles) {
       toast({
         title: "Error",
-        description: "Please enter some notes to summarize",
+        description: "Please enter notes or upload files to summarize",
         variant: "destructive",
       });
       return;
@@ -78,10 +206,25 @@ export default function NotesSummarizerPage() {
     setLoading(true);
 
     try {
+      // Prepare content - prioritize uploaded files, then add manual notes
+      let contentToSummarize = formData.notes;
+      
+      if (uploadedFiles.length > 0) {
+        const fileContent = uploadedFiles
+          .map(f => `### ${f.name}\n${f.content}`)
+          .join('\n\n---\n\n');
+        contentToSummarize = fileContent + (formData.notes ? `\n\n### Additional Notes\n${formData.notes}` : '');
+      }
+
       const response = await fetch("/api/summarize-notes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          notes: contentToSummarize,
+          subject: formData.subject,
+          examType: formData.examType,
+          title: formData.title,
+        }),
       });
 
       const data = await response.json();
@@ -283,13 +426,74 @@ export default function NotesSummarizerPage() {
                   onChange={handleInputChange}
                 />
 
+                <div>
+                  <label className="text-sm font-medium text-gray-700 mb-2 block">
+                    Upload Files to Summarize
+                  </label>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    multiple
+                    accept=".pdf,.png,.txt"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                    aria-label="Upload files"
+                  />
+                  <Button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="w-full bg-emerald-100 hover:bg-emerald-200 text-emerald-700 border border-emerald-300"
+                    variant="outline"
+                  >
+                    <Upload className="w-4 h-4 mr-2" />
+                    Add Files (Max 50MB)
+                  </Button>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Supported: PDF, PNG, TXT
+                  </p>
+                </div>
+
+                {uploadedFiles.length > 0 && (
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium text-gray-700">
+                      Uploaded Files ({uploadedFiles.length})
+                    </p>
+                    <div className="space-y-1 max-h-40 overflow-y-auto">
+                      {uploadedFiles.map((file) => (
+                        <div
+                          key={file.id}
+                          className="flex items-center justify-between p-2 bg-emerald-50 rounded-lg border border-emerald-200"
+                        >
+                          <div className="flex items-center gap-2 min-w-0">
+                            <File className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                            <div className="min-w-0">
+                              <p className="text-xs font-medium text-gray-700 truncate">
+                                {file.name}
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                {(file.size / 1024).toFixed(1)} KB
+                              </p>
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => removeFile(file.id)}
+                            className="flex-shrink-0 p-1 hover:bg-emerald-200 rounded transition"
+                          >
+                            <X className="w-4 h-4 text-emerald-600" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 <textarea
                   name="notes"
-                  placeholder="Paste your notes here…"
+                  placeholder="Or paste your notes here… (optional if files uploaded)"
                   value={formData.notes}
                   onChange={handleInputChange}
                   className="w-full min-h-36 rounded-lg border border-emerald-200 bg-white/70 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  required
                 />
 
                 <Input
@@ -354,33 +558,37 @@ export default function NotesSummarizerPage() {
                     </CardHeader>
 
                     <CardContent className="pt-6">
-                      <div className="bg-gradient-to-br from-emerald-50 to-blue-50 rounded-lg p-6 border border-emerald-200/40 prose prose-sm max-w-none">
-                        <div className="text-gray-800">
-                          <div
-                            dangerouslySetInnerHTML={{
-                              __html: summary.summary
-                                .split('\n')
-                                .map(line => {
-                                  if (line.startsWith('##')) {
-                                    return `<h3 style="color: #059669; margin-top: 1.5em; margin-bottom: 0.5em; font-weight: bold;">${line.replace(/^#{1,3}\s/, '')}</h3>`;
-                                  }
-                                  if (line.startsWith('#')) {
-                                    return `<h2 style="color: #059669; margin-top: 1em; margin-bottom: 0.5em; font-weight: bold; font-size: 1.25em;">${line.replace(/^#{1,3}\s/, '')}</h2>`;
-                                  }
-                                  if (line.startsWith('-') || line.startsWith('*')) {
-                                    return `<li style="margin-left: 1.5em; margin-bottom: 0.5em;">${line.replace(/^[-*]\s/, '')}</li>`;
-                                  }
-                                  if (line.startsWith('**')) {
-                                    return `<p style="font-weight: bold; color: #334155; margin: 0.5em 0;">${line.replace(/\*\*/g, '')}</p>`;
-                                  }
-                                  if (line.trim()) {
-                                    return `<p style="margin: 0.5em 0; color: #334155; line-height: 1.6;">${line}</p>`;
-                                  }
-                                  return '';
-                                })
-                                .join('')
+                      <div className="bg-gradient-to-br from-emerald-50 to-blue-50 rounded-lg p-6 border border-emerald-200/40">
+                        <div className="text-gray-800 markdown-content">
+                          <ReactMarkdown
+                            components={{
+                              h1: ({node, ...props}) => <h1 className="text-2xl font-bold text-emerald-700 mt-6 mb-3" {...props} />,
+                              h2: ({node, ...props}) => <h2 className="text-xl font-bold text-emerald-700 mt-5 mb-2" {...props} />,
+                              h3: ({node, ...props}) => <h3 className="text-lg font-bold text-emerald-600 mt-4 mb-2" {...props} />,
+                              h4: ({node, ...props}) => <h4 className="text-base font-bold text-emerald-600 mt-3 mb-1" {...props} />,
+                              p: ({node, ...props}) => <p className="text-gray-700 mb-3 leading-relaxed" {...props} />,
+                              strong: ({node, ...props}) => <strong className="font-bold text-gray-900" {...props} />,
+                              em: ({node, ...props}) => <em className="italic text-gray-700" {...props} />,
+                              ul: ({node, ...props}) => <ul className="list-disc list-inside mb-3 ml-2 space-y-1" {...props} />,
+                              ol: ({node, ...props}) => <ol className="list-decimal list-inside mb-3 ml-2 space-y-1" {...props} />,
+                              li: ({node, ...props}) => <li className="text-gray-700" {...props} />,
+                              blockquote: ({node, ...props}) => <blockquote className="border-l-4 border-emerald-500 pl-4 py-2 my-3 bg-emerald-50/50 italic text-gray-700" {...props} />,
+                              table: ({node, ...props}) => <table className="w-full border-collapse my-4 border border-emerald-300" {...props} />,
+                              thead: ({node, ...props}) => <thead className="bg-emerald-100" {...props} />,
+                              tbody: ({node, ...props}) => <tbody {...props} />,
+                              tr: ({node, ...props}) => <tr className="border border-emerald-300" {...props} />,
+                              th: ({node, ...props}) => <th className="border border-emerald-300 px-3 py-2 text-left font-bold text-gray-900" {...props} />,
+                              td: ({node, ...props}) => <td className="border border-emerald-300 px-3 py-2 text-gray-700" {...props} />,
+                              code: ({node, inline, ...props}: any) => 
+                                inline ? 
+                                <code className="bg-emerald-100 text-emerald-900 px-2 py-1 rounded font-mono text-sm" {...props} /> :
+                                <code className="bg-gray-900 text-emerald-300 px-4 py-3 rounded font-mono text-sm block overflow-x-auto my-3" {...props} />,
+                              pre: ({node, ...props}) => <pre className="bg-gray-900 text-emerald-300 px-4 py-3 rounded font-mono text-sm overflow-x-auto my-3" {...props} />,
+                              hr: () => <hr className="my-4 border-emerald-300" />,
                             }}
-                          />
+                          >
+                            {summary.summary}
+                          </ReactMarkdown>
                         </div>
                       </div>
                     </CardContent>
