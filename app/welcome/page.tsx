@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,10 +21,18 @@ import {
   ArrowRight,
   Lightbulb,
   Calendar,
+  Sun,
+  Moon,
 } from "lucide-react";
 
 export default function WelcomePage() {
   const router = useRouter();
+  const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const start = (path = "/signup") => {
     try {
@@ -52,6 +61,43 @@ export default function WelcomePage() {
       <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-indigo-100/30 to-purple-100/20 rounded-full blur-3xl -mr-48 -mt-48 dark:from-indigo-900/20 dark:to-purple-900/10" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-slate-200/20 to-slate-100/10 rounded-full blur-3xl -ml-48 -mb-48 dark:from-slate-800/20 dark:to-slate-900/10" />
 
+      {/* Top Navigation Bar */}
+      <nav className="sticky top-0 z-40 border-b bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg border-slate-200 dark:border-slate-800">
+        <div className="container mx-auto px-4 relative z-20 flex items-center justify-between h-16">
+          {/* Cerevia Logo */}
+          <div className="flex items-center gap-3 font-bold">
+            <div className="p-2 rounded-lg bg-linear-to-br from-indigo-600 to-purple-600 text-white shadow-lg">
+              <Brain size={20} />
+            </div>
+            <div className="flex flex-col leading-none">
+              <span className="text-lg text-slate-900 dark:text-white">
+                Cerevia
+              </span>
+              <span className="text-xs text-slate-600 dark:text-slate-400">
+                The Path to Understanding
+              </span>
+            </div>
+          </div>
+
+          {/* Dark Mode Toggle */}
+          {mounted && (
+            <button
+              onClick={() =>
+                setTheme(resolvedTheme === "dark" ? "light" : "dark")
+              }
+              className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              aria-label="Toggle dark mode"
+            >
+              {resolvedTheme === "dark" ? (
+                <Sun size={20} className="text-yellow-500" />
+              ) : (
+                <Moon size={20} className="text-slate-600" />
+              )}
+            </button>
+          )}
+        </div>
+      </nav>
+
       <div className="container mx-auto px-4 relative z-10">
         {/* HERO SECTION */}
         <section className="min-h-screen flex items-center justify-center pt-20 pb-20">
@@ -61,17 +107,6 @@ export default function WelcomePage() {
             animate="visible"
             className="max-w-4xl mx-auto text-center space-y-8"
           >
-            {/* Logo/Brand Identifier */}
-            <motion.div
-              variants={item}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200/50 dark:border-indigo-800/50"
-            >
-              <Brain className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-              <span className="text-sm font-medium text-indigo-700 dark:text-indigo-300">
-                Cerevia: The AI Path to Understanding
-              </span>
-            </motion.div>
-
             {/* Main Heading */}
             <motion.h1
               variants={item}
@@ -86,7 +121,7 @@ export default function WelcomePage() {
             {/* Subheading */}
             <motion.p
               variants={item}
-              className="text-xl md:text-2xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed font-light"
+              className="text-xl md:text-2xl text-slate-700 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed font-light"
             >
               An AI system designed for how serious students think. Plan your
               study path, solve complex doubts, and master concepts with
@@ -116,20 +151,20 @@ export default function WelcomePage() {
             {/* Trust indicators */}
             <motion.div
               variants={item}
-              className="pt-8 flex flex-col sm:flex-row items-center justify-center gap-6 text-sm text-slate-600 dark:text-slate-400"
+              className="pt-8 flex flex-col sm:flex-row items-center justify-center gap-6 text-sm text-slate-700 dark:text-slate-400"
             >
               <div className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-green-600" />
+                <ShieldCheck className="w-4 h-4 text-green-700 dark:text-green-500" />
                 <span>Privacy-First & Secure</span>
               </div>
               <div className="hidden sm:block w-px h-4 bg-slate-300 dark:bg-slate-600" />
               <div className="flex items-center gap-2">
-                <Zap className="w-4 h-4 text-amber-600" />
+                <Zap className="w-4 h-4 text-amber-700 dark:text-amber-500" />
                 <span>AI Built for Exams</span>
               </div>
               <div className="hidden sm:block w-px h-4 bg-slate-300 dark:bg-slate-600" />
               <div className="flex items-center gap-2">
-                <Brain className="w-4 h-4 text-indigo-600" />
+                <Brain className="w-4 h-4 text-indigo-700 dark:text-indigo-400" />
                 <span>Structured Understanding</span>
               </div>
             </motion.div>
@@ -149,7 +184,7 @@ export default function WelcomePage() {
               <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">
                 Why Cerevia?
               </h2>
-              <p className="text-xl text-slate-600 dark:text-slate-300 font-light">
+              <p className="text-xl text-slate-700 dark:text-slate-300 font-light">
                 Because thinking clearly is the first step to learning deeply.
               </p>
             </motion.div>
@@ -158,45 +193,45 @@ export default function WelcomePage() {
               variants={item}
               className="grid gap-6 md:grid-cols-2 pt-8"
             >
-              <div className="p-6 rounded-lg bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
-                <Brain className="w-6 h-6 text-indigo-600 dark:text-indigo-400 mb-3" />
+              <div className="p-6 rounded-lg bg-white dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700">
+                <Brain className="w-6 h-6 text-indigo-700 dark:text-indigo-400 mb-3" />
                 <h3 className="font-semibold text-slate-900 dark:text-white mb-2">
                   Cognitive Clarity
                 </h3>
-                <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                <p className="text-slate-700 dark:text-slate-400 text-sm leading-relaxed">
                   We help you break down complex topics into structured learning
                   paths, not just answer questions.
                 </p>
               </div>
 
-              <div className="p-6 rounded-lg bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
-                <BookOpen className="w-6 h-6 text-indigo-600 dark:text-indigo-400 mb-3" />
+              <div className="p-6 rounded-lg bg-white dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700">
+                <BookOpen className="w-6 h-6 text-indigo-700 dark:text-indigo-400 mb-3" />
                 <h3 className="font-semibold text-slate-900 dark:text-white mb-2">
                   Exam-Native Design
                 </h3>
-                <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                <p className="text-slate-700 dark:text-slate-400 text-sm leading-relaxed">
                   Built specifically for JEE, NEET, GATE, UPSC, and Boards—not
                   generic, but purpose-built.
                 </p>
               </div>
 
-              <div className="p-6 rounded-lg bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
-                <Zap className="w-6 h-6 text-indigo-600 dark:text-indigo-400 mb-3" />
+              <div className="p-6 rounded-lg bg-white dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700">
+                <Zap className="w-6 h-6 text-indigo-700 dark:text-indigo-400 mb-3" />
                 <h3 className="font-semibold text-slate-900 dark:text-white mb-2">
                   Unified Workflow
                 </h3>
-                <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                <p className="text-slate-700 dark:text-slate-400 text-sm leading-relaxed">
                   Plan, understand, practice, and review—all in one place. No
                   app-switching chaos.
                 </p>
               </div>
 
-              <div className="p-6 rounded-lg bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
-                <ShieldCheck className="w-6 h-6 text-indigo-600 dark:text-indigo-400 mb-3" />
+              <div className="p-6 rounded-lg bg-white dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700">
+                <ShieldCheck className="w-6 h-6 text-indigo-700 dark:text-indigo-400 mb-3" />
                 <h3 className="font-semibold text-slate-900 dark:text-white mb-2">
                   Your Privacy First
                 </h3>
-                <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                <p className="text-slate-700 dark:text-slate-400 text-sm leading-relaxed">
                   Your learning data is yours alone. We don't sell, we don't
                   track unnecessarily.
                 </p>
@@ -221,7 +256,7 @@ export default function WelcomePage() {
               <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">
                 How Cerevia Works
               </h2>
-              <p className="text-lg text-slate-600 dark:text-slate-300">
+              <p className="text-lg text-slate-700 dark:text-slate-300">
                 AI that understands how students think, built for structured
                 mastery.
               </p>
@@ -267,17 +302,17 @@ export default function WelcomePage() {
                   variants={item}
                   key={i}
                   whileHover={{ y: -4 }}
-                  className="p-6 rounded-lg bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all"
+                  className="p-6 rounded-lg bg-white dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 hover:shadow-md transition-all"
                 >
                   <div className="p-3 rounded-lg bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/40 dark:to-purple-900/40 w-fit mb-4">
-                    <div className="text-indigo-600 dark:text-indigo-400">
+                    <div className="text-indigo-700 dark:text-indigo-400">
                       {f.icon}
                     </div>
                   </div>
                   <h3 className="font-semibold text-slate-900 dark:text-white mb-2">
                     {f.title}
                   </h3>
-                  <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                  <p className="text-slate-700 dark:text-slate-400 text-sm leading-relaxed">
                     {f.desc}
                   </p>
                 </motion.div>
@@ -299,7 +334,7 @@ export default function WelcomePage() {
               <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">
                 Common Questions
               </h2>
-              <p className="text-lg text-slate-600 dark:text-slate-300">
+              <p className="text-lg text-slate-700 dark:text-slate-300">
                 Everything you need to know about Cerevia.
               </p>
             </motion.div>
@@ -308,14 +343,14 @@ export default function WelcomePage() {
               <Accordion type="single" collapsible className="space-y-3">
                 <AccordionItem
                   value="what"
-                  className="border border-slate-200 dark:border-slate-700 rounded-lg px-4"
+                  className="border border-slate-300 dark:border-slate-700 rounded-lg px-4"
                 >
                   <AccordionTrigger className="hover:no-underline py-4">
                     <span className="text-left font-semibold text-slate-900 dark:text-white">
                       What makes Cerevia different from ChatGPT?
                     </span>
                   </AccordionTrigger>
-                  <AccordionContent className="text-slate-600 dark:text-slate-400 pb-4">
+                  <AccordionContent className="text-slate-700 dark:text-slate-400 pb-4">
                     Cerevia is purpose-built for students and exams. We
                     specialize in structured learning workflows, exam-focused
                     reasoning, and step-by-step mastery. ChatGPT is a
@@ -326,14 +361,14 @@ export default function WelcomePage() {
 
                 <AccordionItem
                   value="lang"
-                  className="border border-slate-200 dark:border-slate-700 rounded-lg px-4"
+                  className="border border-slate-300 dark:border-slate-700 rounded-lg px-4"
                 >
                   <AccordionTrigger className="hover:no-underline py-4">
                     <span className="text-left font-semibold text-slate-900 dark:text-white">
                       Does Cerevia support multiple languages?
                     </span>
                   </AccordionTrigger>
-                  <AccordionContent className="text-slate-600 dark:text-slate-400 pb-4">
+                  <AccordionContent className="text-slate-700 dark:text-slate-400 pb-4">
                     Yes—Hindi and English are fully supported. You can switch
                     languages mid-session. We're expanding to regional languages
                     based on student demand. Learn in whatever language helps
@@ -343,14 +378,14 @@ export default function WelcomePage() {
 
                 <AccordionItem
                   value="exams"
-                  className="border border-slate-200 dark:border-slate-700 rounded-lg px-4"
+                  className="border border-slate-300 dark:border-slate-700 rounded-lg px-4"
                 >
                   <AccordionTrigger className="hover:no-underline py-4">
                     <span className="text-left font-semibold text-slate-900 dark:text-white">
                       Which exams does Cerevia cover?
                     </span>
                   </AccordionTrigger>
-                  <AccordionContent className="text-slate-600 dark:text-slate-400 pb-4">
+                  <AccordionContent className="text-slate-700 dark:text-slate-400 pb-4">
                     JEE Mains & Advanced, NEET, GATE, UPSC, CBSE/ICSE Boards,
                     CA/CS, and many state exams. Our knowledge base is
                     continuously expanded based on exam syllabi and student
@@ -360,14 +395,14 @@ export default function WelcomePage() {
 
                 <AccordionItem
                   value="privacy"
-                  className="border border-slate-200 dark:border-slate-700 rounded-lg px-4"
+                  className="border border-slate-300 dark:border-slate-700 rounded-lg px-4"
                 >
                   <AccordionTrigger className="hover:no-underline py-4">
                     <span className="text-left font-semibold text-slate-900 dark:text-white">
                       How is my data protected?
                     </span>
                   </AccordionTrigger>
-                  <AccordionContent className="text-slate-600 dark:text-slate-400 pb-4">
+                  <AccordionContent className="text-slate-700 dark:text-slate-400 pb-4">
                     Your data is encrypted, stored securely, and used only to
                     provide Cerevia's services. We don't sell your data, track
                     you unnecessarily, or use it for marketing. Privacy is
@@ -377,14 +412,14 @@ export default function WelcomePage() {
 
                 <AccordionItem
                   value="cost"
-                  className="border border-slate-200 dark:border-slate-700 rounded-lg px-4"
+                  className="border border-slate-300 dark:border-slate-700 rounded-lg px-4"
                 >
                   <AccordionTrigger className="hover:no-underline py-4">
                     <span className="text-left font-semibold text-slate-900 dark:text-white">
                       What's the pricing model?
                     </span>
                   </AccordionTrigger>
-                  <AccordionContent className="text-slate-600 dark:text-slate-400 pb-4">
+                  <AccordionContent className="text-slate-700 dark:text-slate-400 pb-4">
                     We offer a free tier to get started. Premium plans unlock
                     unlimited access, advanced features, and priority support.
                     We believe good education shouldn't be expensive, so we keep
@@ -407,7 +442,7 @@ export default function WelcomePage() {
           >
             <motion.div
               variants={item}
-              className="p-8 rounded-lg bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 border border-indigo-200/50 dark:border-indigo-800/50"
+              className="p-8 rounded-lg bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/20 dark:to-purple-900/20 border border-indigo-300 dark:border-indigo-800/50"
             >
               <p className="text-lg md:text-xl text-slate-900 dark:text-white font-light leading-relaxed">
                 <span className="font-semibold">
@@ -440,7 +475,7 @@ export default function WelcomePage() {
               <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">
                 Ready to Take Control of Your Learning?
               </h2>
-              <p className="text-xl text-slate-600 dark:text-slate-300 font-light">
+              <p className="text-xl text-slate-700 dark:text-slate-300 font-light">
                 Join thousands of students who've moved beyond chatbots to
                 structured, AI-guided mastery.
               </p>

@@ -206,7 +206,7 @@ export default function ProfilePage() {
 							<h1 className="text-5xl font-bold tracking-tight bg-linear-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent mb-4">
 								Create Your Profile
 							</h1>
-							<p className="text-lg text-gray-600 max-w-2xl mx-auto">
+							<p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
 								Help us personalize your study experience by sharing a few
 								details about yourself
 							</p>
@@ -278,9 +278,9 @@ export default function ProfilePage() {
 								</motion.div>
 
 								<motion.div variants={itemVariants}>
-									<Card className="glass-card border-purple-200/60 shadow-xl mt-5">
+									<Card className="glass-card border-purple-200/60 shadow-xl">
 										<CardHeader>
-											<CardTitle className="flex items-center gap-2">
+											<CardTitle className="flex items-center gap-2 text-slate-900 dark:text-white">
 												<BookOpen className="w-5 h-5 text-purple-600" />
 												Your Information
 											</CardTitle>
@@ -295,7 +295,7 @@ export default function ProfilePage() {
 												className="space-y-6"
 											>
 												<div className="space-y-2">
-													<label className="block text-sm font-medium text-gray-700">
+													<label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
 														Full Name *
 													</label>
 													<Input
@@ -304,19 +304,32 @@ export default function ProfilePage() {
 														onChange={handleInputChange}
 														placeholder="Enter your full name"
 														required
-														className="border-purple-200"
 													/>
 												</div>
 
 												<div className="space-y-2">
-													<label className="block text-sm font-medium text-gray-700">
+													<label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+														Email Address *
+													</label>
+													<Input
+														type="email"
+														name="email"
+														value={profileData.email}
+														onChange={handleInputChange}
+														placeholder="your.email@example.com"
+														required
+													/>
+												</div>
+
+												<div className="space-y-2">
+													<label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
 														Target Exam
 													</label>
 													<select
 														name="targetExam"
 														value={profileData.targetExam}
 														onChange={handleInputChange}
-														className="w-full rounded-lg border border-purple-200 bg-white/70 px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500"
+														className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/60 text-slate-900 dark:text-slate-100 px-4 py-2 text-sm shadow-sm dark:shadow-lg transition-all duration-200 focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 hover:border-slate-300 dark:hover:border-slate-600"
 													>
 														{[
 															'JEE Advanced',
@@ -335,14 +348,14 @@ export default function ProfilePage() {
 												</div>
 
 												<div className="space-y-2">
-													<label className="block text-sm font-medium text-gray-700">
-														Current Class
+													<label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+														Current Class/Level
 													</label>
 													<select
 														name="currentClass"
 														value={profileData.currentClass}
 														onChange={handleInputChange}
-														className="w-full rounded-lg border border-purple-200 bg-white/70 px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500"
+														className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/60 text-slate-900 dark:text-slate-100 px-4 py-2 text-sm shadow-sm dark:shadow-lg transition-all duration-200 focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 hover:border-slate-300 dark:hover:border-slate-600"
 													>
 														{['9', '10', '11', '12', 'Graduated'].map((c) => (
 															<option key={c} value={c}>
@@ -353,7 +366,7 @@ export default function ProfilePage() {
 												</div>
 
 												<div className="space-y-2">
-													<label className="block text-sm font-medium text-gray-700">
+													<label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
 														Your Strengths
 													</label>
 													<textarea
@@ -362,12 +375,12 @@ export default function ProfilePage() {
 														onChange={handleInputChange}
 														placeholder="E.g., Mathematics, Problem Solving"
 														rows={3}
-														className="w-full rounded-lg border border-purple-200 bg-white/70 px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500"
+														className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/60 text-slate-900 dark:text-slate-100 px-4 py-2 text-sm shadow-sm dark:shadow-lg transition-all duration-200 focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 hover:border-slate-300 dark:hover:border-slate-600"
 													/>
 												</div>
 
 												<div className="space-y-2">
-													<label className="block text-sm font-medium text-gray-700">
+													<label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
 														Areas to Improve
 													</label>
 													<textarea
@@ -376,7 +389,7 @@ export default function ProfilePage() {
 														onChange={handleInputChange}
 														placeholder="E.g., Chemistry Reactions, Reading Comprehension"
 														rows={3}
-														className="w-full rounded-lg border border-purple-200 bg-white/70 px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500"
+														className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/60 text-slate-900 dark:text-slate-100 px-4 py-2 text-sm shadow-sm dark:shadow-lg transition-all duration-200 focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 hover:border-slate-300 dark:hover:border-slate-600"
 													/>
 												</div>
 
@@ -421,10 +434,10 @@ export default function ProfilePage() {
 											<div className="flex gap-3">
 												<Target className="w-5 h-5 text-purple-600 shrink-0 mt-0.5" />
 												<div>
-													<p className="font-medium text-sm text-gray-900">
+													<p className="font-medium text-sm text-slate-900 dark:text-slate-100">
 														Personalized Plans
 													</p>
-													<p className="text-xs text-gray-600">
+													<p className="text-xs text-slate-600 dark:text-slate-400">
 														Study plans tailored to your level
 													</p>
 												</div>
@@ -433,10 +446,10 @@ export default function ProfilePage() {
 											<div className="flex gap-3">
 												<Calendar className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
 												<div>
-													<p className="font-medium text-sm text-gray-900">
+													<p className="font-medium text-sm text-slate-900 dark:text-slate-100">
 														Better Tracking
 													</p>
-													<p className="text-xs text-gray-600">
+													<p className="text-xs text-slate-600 dark:text-slate-400">
 														Track your progress over time
 													</p>
 												</div>
@@ -445,10 +458,10 @@ export default function ProfilePage() {
 											<div className="flex gap-3">
 												<Sparkles className="w-5 h-5 text-indigo-600 shrink-0 mt-0.5" />
 												<div>
-													<p className="font-medium text-sm text-gray-900">
+													<p className="font-medium text-sm text-slate-900 dark:text-slate-100">
 														Smart Suggestions
 													</p>
-													<p className="text-xs text-gray-600">
+													<p className="text-xs text-slate-600 dark:text-slate-400">
 														AI-powered recommendations
 													</p>
 												</div>
@@ -479,10 +492,10 @@ export default function ProfilePage() {
 								<CheckCircle className="w-16 h-16 text-green-600" />
 							</div>
 						</div>
-						<h2 className="text-4xl font-bold text-gray-900 mb-2">
+						<h2 className="text-4xl font-bold text-slate-900 dark:text-white mb-2">
 							Profile Created Successfully!
 						</h2>
-						<p className="text-lg text-gray-600 mb-8">
+						<p className="text-lg text-slate-600 dark:text-slate-300 mb-8">
 							Redirecting to your dashboard...
 						</p>
 					</motion.div>

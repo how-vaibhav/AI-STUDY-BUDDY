@@ -1,8 +1,11 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
+import gsap from 'gsap';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -16,67 +19,58 @@ import { useToast } from '@/hooks/use-toast';
 import { signUp } from '@/lib/auth';
 import { AuthNav } from '@/components/auth-nav';
 
-import { gsap } from 'gsap';
-import { motion } from 'framer-motion';
-
 export default function SignupPage() {
 	const router = useRouter();
 	const { toast } = useToast();
-	const cardRef = useRef<HTMLDivElement>(null);
+
 	const containerRef = useRef<HTMLDivElement>(null);
+	const cardRef = useRef<HTMLDivElement>(null);
 
 	const [loading, setLoading] = useState(false);
 	const [formData, setFormData] = useState({
-		fullName: '',
 		email: '',
 		password: '',
 		confirmPassword: '',
 	});
 
-	// Advanced background animations
+	/* ---------- Ambient background motion (subtle & premium) ---------- */
 	useEffect(() => {
 		const ctx = gsap.context(() => {
-			// Floating blobs animation
 			gsap.to('.blob-1', {
-				x: 30,
-				y: 50,
-				duration: 6,
+				x: 40,
+				y: 60,
+				duration: 10,
 				repeat: -1,
 				yoyo: true,
 				ease: 'sine.inOut',
 			});
 			gsap.to('.blob-2', {
-				x: -40,
-				y: -60,
-				duration: 8,
+				x: -50,
+				y: -40,
+				duration: 12,
 				repeat: -1,
 				yoyo: true,
 				ease: 'sine.inOut',
 			});
 			gsap.to('.blob-3', {
-				x: 50,
-				y: -30,
-				duration: 7,
+				x: 30,
+				y: -50,
+				duration: 11,
 				repeat: -1,
 				yoyo: true,
 				ease: 'sine.inOut',
 			});
-			// Rotating gradient
-			gsap.to('.gradient-orb', {
-				rotation: 360,
-				duration: 20,
-				repeat: -1,
-				ease: 'none',
-			});
 		}, containerRef);
+
 		return () => ctx.revert();
 	}, []);
 
+	/* ---------- Card entrance ---------- */
 	useEffect(() => {
 		gsap.fromTo(
 			cardRef.current,
-			{ opacity: 0, y: 40, scale: 0.96 },
-			{ opacity: 1, y: 0, scale: 1, duration: 0.9, ease: 'power3.out' },
+			{ opacity: 0, y: 32, scale: 0.97 },
+			{ opacity: 1, y: 0, scale: 1, duration: 0.8, ease: 'power3.out' },
 		);
 	}, []);
 
@@ -88,10 +82,10 @@ export default function SignupPage() {
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
-		if (!formData.fullName || !formData.email || !formData.password) {
+		if (!formData.email || !formData.password) {
 			toast({
-				title: 'Error',
-				description: 'Please fill in all fields',
+				title: 'Missing information',
+				description: 'Please fill in all required fields',
 				variant: 'destructive',
 			});
 			return;
@@ -99,7 +93,7 @@ export default function SignupPage() {
 
 		if (formData.password !== formData.confirmPassword) {
 			toast({
-				title: 'Error',
+				title: 'Password mismatch',
 				description: 'Passwords do not match',
 				variant: 'destructive',
 			});
@@ -108,7 +102,7 @@ export default function SignupPage() {
 
 		if (formData.password.length < 6) {
 			toast({
-				title: 'Error',
+				title: 'Weak password',
 				description: 'Password must be at least 6 characters',
 				variant: 'destructive',
 			});
@@ -119,30 +113,31 @@ export default function SignupPage() {
 
 		try {
 			const result = await signUp(formData.email, formData.password);
+
 			if (result.error) {
 				toast({
-					title: 'Error',
+					title: 'Signup failed',
 					description: result.error,
 					variant: 'destructive',
 				});
 			} else {
 				toast({
-					title: 'Success',
-					description: 'Account created successfully!',
+					title: 'Welcome!',
+					description: 'Your account has been created successfully',
 				});
-				// Animate to dashboard
-				gsap.to('.signup-card', {
+
+				gsap.to(cardRef.current, {
 					opacity: 0,
-					y: -50,
-					duration: 0.5,
+					y: -40,
+					duration: 0.45,
 					ease: 'power2.in',
 					onComplete: () => router.push('/dashboard'),
 				});
 			}
 		} catch {
 			toast({
-				title: 'Error',
-				description: 'An unexpected error occurred',
+				title: 'Unexpected error',
+				description: 'Please try again later',
 				variant: 'destructive',
 			});
 		} finally {
@@ -153,51 +148,51 @@ export default function SignupPage() {
 	return (
 		<>
 			<AuthNav />
+
 			<div
 				ref={containerRef}
-				className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-4 pt-20 dark:from-slate-950 dark:via-purple-900/20 dark:to-slate-950"
+				className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background px-4"
 			>
-				{/* Animated background blobs */}
-				<div className="absolute inset-0 overflow-hidden">
-					<div className="blob-1 absolute top-20 left-10 w-72 h-72 bg-purple-600/20 dark:bg-purple-500/15 rounded-full blur-3xl" />
-					<div className="blob-2 absolute bottom-20 right-10 w-80 h-80 bg-blue-600/15 dark:bg-blue-500/10 rounded-full blur-3xl" />
-					<div className="blob-3 absolute top-1/2 left-1/3 w-96 h-96 bg-indigo-600/15 dark:bg-indigo-500/10 rounded-full blur-3xl" />
-					<div className="gradient-orb absolute inset-0 opacity-10 dark:opacity-5 bg-gradient-conic from-purple-600 via-blue-600 to-purple-600" />
+				{/* Background blobs */}
+				<div className="absolute inset-0 -z-10 overflow-hidden">
+					<div className="blob-1 absolute top-24 left-12 w-72 h-72 rounded-full bg-purple-500/20 blur-3xl" />
+					<div className="blob-2 absolute bottom-24 right-12 w-80 h-80 rounded-full bg-blue-500/15 blur-3xl" />
+					<div className="blob-3 absolute top-1/2 left-1/3 w-96 h-96 rounded-full bg-indigo-500/15 blur-3xl" />
 				</div>
 
-				{/* Content */}
+				{/* Card */}
 				<motion.div
-					initial={{ opacity: 0, y: 20 }}
+					initial={{ opacity: 0, y: 18 }}
 					animate={{ opacity: 1, y: 0 }}
-					transition={{ duration: 0.6, delay: 0.3 }}
-					className="signup-card relative z-10"
+					transition={{ duration: 0.6, delay: 0.2 }}
+					className="w-full flex justify-center"
 				>
 					<Card
 						ref={cardRef}
-						className="w-full max-w-md shadow-2xl border-white/20 dark:border-white/10 bg-white dark:bg-card/80 backdrop-blur-xl"
+						className="
+              w-full max-w-sm
+              border border-border/60
+              bg-white/80 dark:bg-card/80
+              backdrop-blur-xl
+              shadow-[0_30px_80px_-20px_rgba(0,0,0,0.25)]
+            "
 					>
-						<CardHeader className="space-y-3 text-center">
-							<CardTitle className="text-3xl font-bold tracking-tight bg-gradient-to-r from-purple-600 to-blue-600 dark:from-purple-400 dark:to-blue-400 bg-clip-text text-transparent">
+						<CardHeader className="space-y-2 text-center pt-8">
+							<CardTitle className="text-3xl font-bold tracking-tight bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
 								Create your account
 							</CardTitle>
 
-							<CardDescription className="text-muted-foreground">
-								Join AI Study Buddy and start your learning journey
+							<CardDescription className="text-sm text-muted-foreground">
+								Start learning smarter with AI Study Buddy
 							</CardDescription>
 						</CardHeader>
 
-						<CardContent>
+						<CardContent className="pt-4 pb-6">
 							<form onSubmit={handleSubmit} className="space-y-4">
 								{[
 									{
-										id: 'fullName',
-										label: 'Full Name',
-										type: 'text',
-										placeholder: 'Your name',
-									},
-									{
 										id: 'email',
-										label: 'Email Address',
+										label: 'Email address',
 										type: 'email',
 										placeholder: 'you@email.com',
 									},
@@ -205,20 +200,17 @@ export default function SignupPage() {
 										id: 'password',
 										label: 'Password',
 										type: 'password',
-										placeholder: 'At least 6 characters',
+										placeholder: 'Minimum 6 characters',
 									},
 									{
 										id: 'confirmPassword',
-										label: 'Confirm Password',
+										label: 'Confirm password',
 										type: 'password',
-										placeholder: 'Confirm password',
+										placeholder: 'Re-enter password',
 									},
 								].map((field) => (
 									<div key={field.id} className="space-y-1.5">
-										<label
-											htmlFor={field.id}
-											className="text-sm font-medium text-foreground"
-										>
+										<label htmlFor={field.id} className="text-sm font-medium">
 											{field.label}
 										</label>
 										<Input
@@ -229,16 +221,17 @@ export default function SignupPage() {
 											value={(formData as any)[field.id]}
 											onChange={handleInputChange}
 											required
+											className="h-10"
 										/>
 									</div>
 								))}
 
 								<Button
 									type="submit"
-									className="w-full transition-all duration-300 hover:scale-[1.02]"
 									disabled={loading}
+									className="w-full h-10 text-sm font-semibold transition-all hover:scale-[1.02]"
 								>
-									{loading ? 'Creating account…' : 'Create Account'}
+									{loading ? 'Creating account…' : 'Create account'}
 								</Button>
 							</form>
 
@@ -248,7 +241,7 @@ export default function SignupPage() {
 								</span>{' '}
 								<Link
 									href="/login"
-									className="font-medium text-primary hover:underline transition"
+									className="font-medium text-primary hover:underline"
 								>
 									Sign in
 								</Link>

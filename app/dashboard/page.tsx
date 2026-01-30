@@ -28,6 +28,7 @@ import {
 import {
   LineChart,
   Line,
+  Area,
   BarChart,
   Bar,
   PieChart,
@@ -214,29 +215,53 @@ export default function DashboardPage() {
         </div>
 
         {/* Charts Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
           {/* Study Progress Chart */}
           <Card className="glass-card border-indigo-200/60 dark:border-purple-500/30">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Clock className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+            <CardHeader className="pb-2 sm:pb-4">
+              <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+                <Clock className="w-4 sm:w-5 h-4 sm:h-5 text-indigo-600 dark:text-indigo-400" />
                 Weekly Study Hours
               </CardTitle>
-              <CardDescription>Your study activity this week</CardDescription>
+              <CardDescription className="text-xs sm:text-sm">
+                Your study activity this week
+              </CardDescription>
             </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
+            <CardContent className="px-2 sm:px-6">
+              <ResponsiveContainer width="100%" height={200} minHeight={200}>
                 <LineChart data={studyProgressData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="day" />
-                  <YAxis />
+                  <XAxis dataKey="day" tick={{ fontSize: 12 }} />
+                  <YAxis tick={{ fontSize: 12 }} />
                   <Tooltip />
+                  <defs>
+                    <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop
+                        offset="0%"
+                        stopColor="#6366f1"
+                        stopOpacity="0.18"
+                      />
+                      <stop offset="100%" stopColor="#6366f1" stopOpacity="0" />
+                    </linearGradient>
+                    <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#8b5cf6" />
+                      <stop offset="100%" stopColor="#6366f1" />
+                    </linearGradient>
+                  </defs>
+                  <Area
+                    dataKey="hours"
+                    type="monotone"
+                    stroke="url(#lineGrad)"
+                    fill="url(#areaGrad)"
+                    strokeWidth={2}
+                    dot={{ fill: "#6366f1", r: 3 }}
+                  />
                   <Line
                     type="monotone"
                     dataKey="hours"
-                    stroke="#6366f1"
+                    stroke="url(#lineGrad)"
                     strokeWidth={2}
-                    dot={{ fill: "#6366f1", r: 5 }}
+                    dot={{ fill: "#6366f1", r: 3 }}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -245,23 +270,25 @@ export default function DashboardPage() {
 
           {/* Subject Distribution */}
           <Card className="glass-card border-indigo-200/60 dark:border-purple-500/30">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Target className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+            <CardHeader className="pb-2 sm:pb-4">
+              <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+                <Target className="w-4 sm:w-5 h-4 sm:h-5 text-indigo-600 dark:text-indigo-400" />
                 Study Distribution
               </CardTitle>
-              <CardDescription>Time spent by subject</CardDescription>
+              <CardDescription className="text-xs sm:text-sm">
+                Time spent by subject
+              </CardDescription>
             </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
+            <CardContent className="px-2 sm:px-6">
+              <ResponsiveContainer width="100%" height={200} minHeight={200}>
                 <PieChart>
                   <Pie
                     data={subjectData}
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={({ name, value }) => `${name}: ${value}%`}
-                    outerRadius={80}
+                    label={({ name, value }) => `${value}%`}
+                    outerRadius={60}
                     fill="#8884d8"
                     dataKey="value"
                   >
@@ -277,23 +304,25 @@ export default function DashboardPage() {
         </div>
 
         {/* Performance & Quick Actions */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Performance Chart */}
           <div className="lg:col-span-2">
             <Card className="glass-card border-indigo-200/60 dark:border-purple-500/30">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Award className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+              <CardHeader className="pb-2 sm:pb-4">
+                <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+                  <Award className="w-4 sm:w-5 h-4 sm:h-5 text-indigo-600 dark:text-indigo-400" />
                   Subject Performance
                 </CardTitle>
-                <CardDescription>Accuracy by subject</CardDescription>
+                <CardDescription className="text-xs sm:text-sm">
+                  Accuracy by subject
+                </CardDescription>
               </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
+              <CardContent className="px-2 sm:px-6">
+                <ResponsiveContainer width="100%" height={200} minHeight={200}>
                   <BarChart data={performanceData}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="subject" />
-                    <YAxis />
+                    <XAxis dataKey="subject" tick={{ fontSize: 12 }} />
+                    <YAxis tick={{ fontSize: 12 }} />
                     <Tooltip />
                     <Bar
                       dataKey="correct"
@@ -307,20 +336,20 @@ export default function DashboardPage() {
           </div>
 
           {/* Quick Stats & Actions */}
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* Streak Card */}
             <Card className="glass-card border-indigo-200/60 dark:border-purple-500/30 bg-linear-to-br from-orange-50 to-red-50 dark:from-orange-950 dark:to-red-950">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Zap className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+              <CardHeader className="pb-2 sm:pb-3">
+                <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+                  <Zap className="w-4 sm:w-5 h-4 sm:h-5 text-orange-600 dark:text-orange-400" />
                   Current Streak
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-4xl font-bold text-orange-600 dark:text-orange-400">
+                <p className="text-3xl sm:text-4xl font-bold text-orange-600 dark:text-orange-400">
                   {stats.streak}
                 </p>
-                <p className="text-sm text-muted-foreground mt-2">
+                <p className="text-xs sm:text-sm text-muted-foreground mt-1 sm:mt-2">
                   days in a row 🔥
                 </p>
               </CardContent>
@@ -328,8 +357,10 @@ export default function DashboardPage() {
 
             {/* Motivational Card */}
             <Card className="glass-card border-indigo-200/60 dark:border-purple-500/30 bg-linear-to-br from-emerald-50 to-teal-50 dark:from-emerald-950 dark:to-teal-950">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg">Today's Goal</CardTitle>
+              <CardHeader className="pb-2 sm:pb-3">
+                <CardTitle className="text-base sm:text-lg">
+                  Today's Goal
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
@@ -338,7 +369,7 @@ export default function DashboardPage() {
                     style={{ width: "65%" }}
                   ></div>
                 </div>
-                <p className="text-sm text-muted-foreground mt-2">
+                <p className="text-xs sm:text-sm text-muted-foreground mt-1 sm:mt-2">
                   3.25 of 5 hours completed
                 </p>
               </CardContent>
@@ -347,11 +378,11 @@ export default function DashboardPage() {
         </div>
 
         {/* Quick Actions */}
-        <div className="mt-8 mb-8">
-          <h2 className="text-2xl font-bold mb-4 dark:text-white">
+        <div className="mt-6 sm:mt-8 mb-6 sm:mb-8">
+          <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 dark:text-white">
             Quick Actions
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {[
               {
                 icon: Brain,
@@ -380,22 +411,24 @@ export default function DashboardPage() {
             ].map((action) => (
               <Link key={action.title} href={action.href}>
                 <Card className="glass-card border-indigo-200/60 dark:border-purple-500/30 hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer h-full">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
+                  <CardHeader className="pb-2 sm:pb-3">
+                    <CardTitle className="text-base sm:text-lg flex items-center gap-2">
                       <div
                         className={`p-2 rounded-lg bg-linear-to-br ${action.color} bg-opacity-10`}
                       >
                         <action.icon
-                          className={`w-5 h-5 bg-linear-to-r ${action.color} bg-clip-text text-transparent`}
+                          className={`w-4 sm:w-5 h-4 sm:h-5 bg-linear-to-r ${action.color} bg-clip-text text-transparent`}
                         />
                       </div>
                       {action.title}
                     </CardTitle>
-                    <CardDescription>{action.desc}</CardDescription>
+                    <CardDescription className="text-xs sm:text-sm">
+                      {action.desc}
+                    </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <Button
-                      className={`w-full bg-linear-to-r ${action.color} text-white hover:scale-[1.02] transition`}
+                      className={`w-full h-9 sm:h-10 text-xs sm:text-sm bg-linear-to-r ${action.color} text-white hover:scale-[1.02] transition`}
                     >
                       {action.cta}
                     </Button>

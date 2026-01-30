@@ -168,20 +168,20 @@ export default function QuizPage() {
     <div className="relative min-h-screen overflow-hidden bg-linear-to-br from-indigo-50 via-purple-50 to-blue-50 dark:from-slate-900 dark:via-purple-900 dark:to-slate-900">
       <main
         ref={containerRef}
-        className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10"
+        className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-10"
       >
         {/* Header */}
-        <div className="mb-10">
-          <h1 className="text-4xl font-bold tracking-tight bg-linear-to-r from-indigo-700 to-purple-600 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent mb-2">
+        <div className="mb-6 sm:mb-8 md:mb-10">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight bg-linear-to-r from-indigo-700 to-purple-600 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent mb-1 sm:mb-2">
             Daily Quizzes 🎓
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-xs sm:text-sm md:text-base text-muted-foreground">
             Test your knowledge and track your progress
           </p>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
           {[
             {
               icon: CheckCircle,
@@ -208,19 +208,19 @@ export default function QuizPage() {
                 key={stat.label}
                 className="glass-card border-indigo-200/60 dark:border-purple-500/30"
               >
-                <CardContent className="pt-6">
+                <CardContent className="pt-4 sm:pt-6">
                   <div className="flex items-start justify-between">
                     <div>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-xs sm:text-sm text-muted-foreground">
                         {stat.label}
                       </p>
                       <p
-                        className={`text-3xl font-bold mt-2 bg-linear-to-r ${stat.color} bg-clip-text text-transparent`}
+                        className={`text-2xl sm:text-3xl font-bold mt-1 sm:mt-2 bg-linear-to-r ${stat.color} bg-clip-text text-transparent`}
                       >
                         {stat.value}
                       </p>
                     </div>
-                    <Icon className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
+                    <Icon className="w-6 sm:w-8 h-6 sm:h-8 text-indigo-600 dark:text-indigo-400 shrink-0" />
                   </div>
                 </CardContent>
               </Card>
@@ -229,11 +229,13 @@ export default function QuizPage() {
         </div>
 
         {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Quiz List */}
           <div className="lg:col-span-2">
-            <h2 className="text-2xl font-bold mb-4">Your Quizzes</h2>
-            <div className="space-y-4">
+            <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4">
+              Your Quizzes
+            </h2>
+            <div className="space-y-3 sm:space-y-4">
               {quizzes.map((quiz, index) => (
                 <motion.div
                   key={quiz.id}
@@ -247,24 +249,24 @@ export default function QuizPage() {
                     }`}
                     onClick={() => quiz.unlocked && setSelectedQuiz(quiz)}
                   >
-                    <CardContent className="pt-6">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <span className="text-sm font-bold bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 px-3 py-1 rounded-full">
+                    <CardContent className="pt-4 sm:pt-6">
+                      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-2 flex-wrap">
+                            <span className="text-xs font-bold bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full whitespace-nowrap">
                               Day {quiz.day}
                             </span>
                             {!quiz.unlocked && (
-                              <Lock className="w-4 h-4 text-muted-foreground" />
+                              <Lock className="w-3 sm:w-4 h-3 sm:h-4 text-muted-foreground shrink-0" />
                             )}
                             {quiz.completed && (
-                              <CheckCircle className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                              <CheckCircle className="w-4 sm:w-5 h-4 sm:h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
                             )}
                           </div>
-                          <h3 className="text-lg font-bold mb-1">
+                          <h3 className="text-sm sm:text-base md:text-lg font-bold mb-1 truncate">
                             {quiz.subject}
                           </h3>
-                          <p className="text-sm text-muted-foreground">
+                          <p className="text-xs sm:text-sm text-muted-foreground">
                             {quiz.totalQuestions} questions
                             {quiz.completed && quiz.score && (
                               <span className="ml-2 text-emerald-600 dark:text-emerald-400 font-medium">
@@ -287,7 +289,7 @@ export default function QuizPage() {
                               }
                             }
                           }}
-                          className={`${
+                          className={`whitespace-nowrap h-9 sm:h-10 text-xs sm:text-sm ${
                             quiz.completed
                               ? "bg-emerald-600 hover:bg-emerald-700"
                               : "bg-linear-to-r from-indigo-600 to-purple-600"
@@ -307,13 +309,15 @@ export default function QuizPage() {
             </div>
 
             {/* Info Card */}
-            <Card className="glass-card border-blue-200/60 dark:border-blue-500/30 mt-6 bg-blue-50/50 dark:bg-blue-900/20">
-              <CardContent className="pt-6">
-                <div className="flex gap-4">
-                  <AlertCircle className="w-6 h-6 text-blue-600 dark:text-blue-400 shrink-0 mt-1" />
-                  <div>
-                    <h4 className="font-bold mb-1">Progressive Unlocking</h4>
-                    <p className="text-sm text-muted-foreground">
+            <Card className="glass-card border-blue-200/60 dark:border-blue-500/30 mt-4 sm:mt-6 bg-blue-50/50 dark:bg-blue-900/20">
+              <CardContent className="pt-4 sm:pt-6">
+                <div className="flex gap-3 sm:gap-4">
+                  <AlertCircle className="w-5 sm:w-6 h-5 sm:h-6 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5 sm:mt-1" />
+                  <div className="min-w-0">
+                    <h4 className="font-bold mb-1 text-sm sm:text-base">
+                      Progressive Unlocking
+                    </h4>
+                    <p className="text-xs sm:text-sm text-muted-foreground">
                       Today's quiz is available. Future quizzes unlock as you
                       complete previous ones. This helps you maintain a
                       consistent learning schedule and build momentum!
@@ -325,32 +329,32 @@ export default function QuizPage() {
           </div>
 
           {/* Right Sidebar */}
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* Tips Card */}
             <Card className="glass-card border-purple-200/60 dark:border-purple-500/30">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Brain className="w-5 h-5" />
+              <CardHeader className="pb-3 sm:pb-4">
+                <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+                  <Brain className="w-4 sm:w-5 h-4 sm:h-5" />
                   Tips for Success
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3 text-sm">
+              <CardContent className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
                 <div className="flex gap-2">
-                  <span className="text-lg">⏱️</span>
+                  <span className="text-base sm:text-lg shrink-0">⏱️</span>
                   <p>
                     Complete quizzes within 30 minutes for time-based bonuses
                   </p>
                 </div>
                 <div className="flex gap-2">
-                  <span className="text-lg">🎯</span>
+                  <span className="text-base sm:text-lg shrink-0">🎯</span>
                   <p>Focus on one topic at a time for better retention</p>
                 </div>
                 <div className="flex gap-2">
-                  <span className="text-lg">📈</span>
+                  <span className="text-base sm:text-lg shrink-0">📈</span>
                   <p>Review your mistakes to improve accuracy</p>
                 </div>
                 <div className="flex gap-2">
-                  <span className="text-lg">🔥</span>
+                  <span className="text-base sm:text-lg shrink-0">🔥</span>
                   <p>Maintain your streak by completing daily quizzes</p>
                 </div>
               </CardContent>
@@ -358,13 +362,13 @@ export default function QuizPage() {
 
             {/* Achievements */}
             <Card className="glass-card border-amber-200/60 dark:border-amber-500/30">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Award className="w-5 h-5" />
+              <CardHeader className="pb-3 sm:pb-4">
+                <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+                  <Award className="w-4 sm:w-5 h-4 sm:h-5" />
                   Achievements
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2 text-sm">
+              <CardContent className="space-y-2 text-xs sm:text-sm">
                 {[
                   "✓ Perfect Score (100%)",
                   "✓ 7-Day Streak",
@@ -386,13 +390,13 @@ export default function QuizPage() {
 
             {/* Notification Card */}
             <Card className="glass-card border-green-200/60 dark:border-green-500/30 bg-green-50/50 dark:bg-green-900/20">
-              <CardContent className="pt-6">
+              <CardContent className="pt-4 sm:pt-6">
                 <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-green-700 dark:text-green-400 font-medium">
-                    <Unlock className="w-5 h-5" />
+                  <div className="flex items-center gap-2 text-green-700 dark:text-green-400 font-medium text-xs sm:text-sm">
+                    <Unlock className="w-4 sm:w-5 h-4 sm:h-5 shrink-0" />
                     Today's Quiz Unlocked!
                   </div>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs sm:text-sm text-muted-foreground">
                     Complete it to unlock tomorrow's quiz and maintain your
                     streak.
                   </p>

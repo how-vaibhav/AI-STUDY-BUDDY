@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
-
-import { useState } from "react";
+import React, { useRef, useEffect, useState } from "react";
+import gsap from "gsap";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { motion } from "framer-motion";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -17,64 +18,55 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { signIn } from "@/lib/auth";
 import { AuthNav } from "@/components/auth-nav";
-import { motion } from "framer-motion";
-import gsap from "gsap";
 
 export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const [loading, setLoading] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
-  // Advanced background animations
+  /* ---------- Smooth ambient motion (eye-friendly) ---------- */
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Floating blobs animation
-      gsap.to(".blob-1", {
-        x: 30,
-        y: 50,
-        duration: 6,
+      gsap.to(".orb-a", {
+        x: 60,
+        y: 40,
+        duration: 18,
         repeat: -1,
         yoyo: true,
         ease: "sine.inOut",
       });
-      gsap.to(".blob-2", {
-        x: -40,
-        y: -60,
-        duration: 8,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-      });
-      gsap.to(".blob-3", {
-        x: 50,
+
+      gsap.to(".orb-b", {
+        x: -50,
         y: -30,
-        duration: 7,
+        duration: 22,
         repeat: -1,
         yoyo: true,
         ease: "sine.inOut",
       });
-      // Rotating gradient
-      gsap.to(".gradient-orb", {
-        rotation: 360,
-        duration: 20,
+
+      gsap.to(".orb-c", {
+        x: 40,
+        y: -50,
+        duration: 26,
         repeat: -1,
-        ease: "none",
+        yoyo: true,
+        ease: "sine.inOut",
       });
     }, containerRef);
+
     return () => ctx.revert();
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((p) => ({ ...p, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -86,28 +78,28 @@ export default function LoginPage() {
 
       if (result.error) {
         toast({
-          title: "Error",
+          title: "Login failed",
           description: result.error,
           variant: "destructive",
         });
       } else {
         toast({
-          title: "Success",
-          description: "Logged in successfully",
+          title: "Welcome back",
+          description: "Signed in successfully",
         });
-        // Animate to dashboard
+
         gsap.to(".login-card", {
           opacity: 0,
-          y: -50,
-          duration: 0.5,
+          y: -40,
+          duration: 0.4,
           ease: "power2.in",
           onComplete: () => router.push("/dashboard"),
         });
       }
-    } catch (error) {
+    } catch {
       toast({
-        title: "Error",
-        description: "An unexpected error occurred",
+        title: "Unexpected error",
+        description: "Please try again later",
         variant: "destructive",
       });
     } finally {
@@ -118,84 +110,110 @@ export default function LoginPage() {
   return (
     <>
       <AuthNav />
+
       <div
         ref={containerRef}
-        className="flex min-h-screen items-center justify-center bg-background px-4 py-12 overflow-hidden relative dark:from-slate-950 dark:via-purple-900/20 dark:to-slate-950"
+        className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background px-4"
       >
-        {/* Animated background blobs */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="blob-1 absolute top-20 left-10 w-72 h-72 bg-purple-600/20 dark:bg-purple-500/15 rounded-full blur-3xl" />
-          <div className="blob-2 absolute bottom-20 right-10 w-80 h-80 bg-blue-600/15 dark:bg-blue-500/10 rounded-full blur-3xl" />
-          <div className="blob-3 absolute top-1/2 left-1/3 w-96 h-96 bg-indigo-600/15 dark:bg-indigo-500/10 rounded-full blur-3xl" />
-          <div className="gradient-orb absolute inset-0 opacity-10 dark:opacity-5 bg-gradient-conic from-purple-600 via-blue-600 to-purple-600" />
+        {/* Ambient animated shapes */}
+        <div className="absolute inset-0 -z-10 overflow-hidden">
+          <div className="orb-a absolute top-20 left-16 w-80 h-80 rounded-full bg-purple-500/25 blur-[120px]" />
+          <div className="orb-b absolute bottom-24 right-20 w-96 h-96 rounded-full bg-blue-500/20 blur-[140px]" />
+          <div className="orb-c absolute top-1/2 left-1/3 w-[28rem] h-[28rem] rounded-full bg-indigo-500/15 blur-[160px]" />
         </div>
 
-        {/* Content */}
+        {/* Card */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="login-card relative z-10"
+          transition={{ duration: 0.6 }}
+          className="login-card w-full flex justify-center"
         >
-          <Card className="w-full max-w-md shadow-2xl border-white/20 dark:border-white/10 bg-white dark:bg-card/80 backdrop-blur-xl">
-            <CardHeader className="space-y-2 text-center">
-              <CardTitle className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 dark:from-purple-400 dark:to-blue-400 bg-clip-text text-transparent">
+          <Card
+            className="
+              w-full max-w-sm
+              border border-border/60
+              bg-white/80 dark:bg-[#0b1020]/80
+              backdrop-blur-xl
+              shadow-[0_40px_90px_-25px_rgba(0,0,0,0.45)]
+            "
+          >
+            <CardHeader className="text-center pt-8 space-y-2">
+              <CardTitle className="text-3xl font-bold bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent">
                 AI Study Buddy
               </CardTitle>
               <CardDescription className="text-muted-foreground">
-                Sign in to your account
+                Sign in to continue learning
               </CardDescription>
             </CardHeader>
-            <CardContent>
+
+            <CardContent className="pt-4 pb-6">
               <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-2">
-                  <label
-                    htmlFor="email"
-                    className="text-sm font-medium text-foreground"
-                  >
-                    Email Address
-                  </label>
+                {/* Email */}
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium">Email</label>
                   <Input
-                    id="email"
                     name="email"
                     type="email"
-                    placeholder="your@email.com"
-                    required
+                    placeholder="you@email.com"
                     value={formData.email}
                     onChange={handleInputChange}
+                    required
+                    className="
+                      h-11
+                      bg-white/70 dark:bg-white/5
+                      border border-border/70
+                      backdrop-blur
+                      shadow-inner
+                      focus:border-purple-400
+                      focus:ring-2 focus:ring-purple-500/30
+                    "
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <label
-                    htmlFor="password"
-                    className="text-sm font-medium text-foreground"
-                  >
-                    Password
-                  </label>
+                {/* Password */}
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium">Password</label>
                   <Input
-                    id="password"
                     name="password"
                     type="password"
-                    placeholder="Enter your password"
-                    required
+                    placeholder="••••••••"
                     value={formData.password}
                     onChange={handleInputChange}
+                    required
+                    className="
+                      h-11
+                      bg-white/70 dark:bg-white/5
+                      border border-border/70
+                      backdrop-blur
+                      shadow-inner
+                      focus:border-purple-400
+                      focus:ring-2 focus:ring-purple-500/30
+                    "
                   />
                 </div>
 
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "Signing in..." : "Sign In"}
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="
+                    w-full h-11 font-semibold
+                    bg-gradient-to-r from-purple-600 to-blue-600
+                    hover:from-purple-700 hover:to-blue-700
+                    transition-all
+                  "
+                >
+                  {loading ? "Signing in…" : "Sign in"}
                 </Button>
               </form>
 
               <div className="mt-6 text-center text-sm">
                 <span className="text-muted-foreground">
-                  Don't have an account?{" "}
-                </span>
+                  Don’t have an account?
+                </span>{" "}
                 <Link
                   href="/signup"
-                  className="font-medium text-primary hover:underline transition"
+                  className="font-medium text-primary hover:underline"
                 >
                   Sign up
                 </Link>
