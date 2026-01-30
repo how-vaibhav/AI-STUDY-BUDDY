@@ -190,8 +190,8 @@ The platform supports exam types including **JEE Advanced/Main**, **NEET**, **GA
 ### 1. Clone & Install
 
 ```bash
-git clone https://github.com/yourusername/ai-study-buddy.git
-cd ai-study-buddy
+git clone https://github.com/how-vaibhav/AI-STUDY-BUDDY
+cd AI-STUDY-BUDDY
 pnpm install
 ```
 
@@ -273,7 +273,7 @@ pnpm dev
 ### Step 1: Clone Repository
 
 ```bash
-git clone https://github.com/yourusername/ai-study-buddy.git
+git clone https://github.com/how-vaibhav/AI-STUDY-BUDDY
 cd ai-study-buddy
 ```
 
@@ -291,11 +291,12 @@ Create `.env.local` file:
 
 ```env
 # Supabase Configuration
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-
+NEXT_PUBLIC_SUPABASE_URL=https://khqlpsswhnagajpqbyoz.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtocWxwc3N3aG5hZ2FqcHFieW96Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0MDU3MjMsImV4cCI6MjA4NDk4MTcyM30.RmadFGLPDO4_00rXObZwYGK_WFc7majEBLufe2TD_78
 # GROQ API
-GROQ_API_KEY=your-groq-api-key
+GROQ_API_KEY=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
+
+
 ```
 
 ### Step 4: Database Setup
