@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { processUploadedFile } from "@/lib/file-utils";
+import generateYoutubeVideosFromContent from "../../lib/video-utils";
 
 interface Summary {
   id: string;
@@ -231,6 +232,11 @@ export default function NotesSummarizerPage() {
           (formData.notes ? `\n\n### Additional Notes\n${formData.notes}` : "");
       }
 
+      // Truncate content to max 12000 characters to stay within Groq token limits
+      if (contentToSummarize.length > 12000) {
+        contentToSummarize = contentToSummarize.substring(0, 12000) + "\n\n[... content truncated ...]";
+      }
+
       const response = await fetch("/api/summarize-notes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -247,19 +253,44 @@ export default function NotesSummarizerPage() {
         throw new Error(data.error || "Failed to summarize notes");
       }
 
+      // Detect subject and topic via server API (server-side Groq call)
+      let detectedSubject = 'general';
+      let detectedTopic = '';
+      try {
+        const res = await fetch('/api/detect-subject', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content: contentToSummarize }),
+        });
+        const j = await res.json();
+        if (res.ok && j.success) {
+          if (j.subject) detectedSubject = j.subject;
+          if (j.topic) detectedTopic = j.topic;
+        }
+      } catch (err) {
+        console.warn('[notes-summarizer] Subject detection failed, falling back to hint', err);
+      }
+
+      // Prefer user-selected subject if provided, otherwise use detected subject
+      const effectiveSubject = formData.subject && formData.subject.trim() ? formData.subject.trim() : detectedSubject;
+
+      // Generate videos based on detected topic (preferred) then subject
+      const youtubeVideos = generateYoutubeVideosFromContent(
+        contentToSummarize,
+        effectiveSubject,
+        detectedTopic,
+      );
+
       setSummaries((prev) => [
         {
           id: Date.now().toString(),
           title:
             formData.title || `Summary - ${new Date().toLocaleDateString()}`,
           summary: data.summary || "",
-          subject: formData.subject || undefined,
+          subject: detectedSubject || undefined,
           examType: formData.examType || undefined,
           timestamp: new Date(),
-          youtubeVideos: generateYoutubeVideos(
-            formData.subject,
-            formData.title,
-          ),
+          youtubeVideos: youtubeVideos,
         },
         ...prev,
       ]);
@@ -350,138 +381,6 @@ export default function NotesSummarizerPage() {
         variant: "destructive",
       });
     }
-  };
-
-  const generateYoutubeVideos = (subject: string, topic: string) => {
-    // Curated YouTube videos based on topics with real, working channels
-    const videoDatabase: Record<
-      string,
-      Array<{ title: string; url: string; channel: string }>
-    > = {
-      physics: [
-        {
-          title: "Physics Full Course - Complete Guide",
-          url: "https://www.youtube.com/channel/UCXDMnCUluDvjQwbDVWXwbow",
-          channel: "Physics Wallah",
-        },
-        {
-          title: "Classical Mechanics - Detailed Explanation",
-          url: "https://www.youtube.com/c/TheOrganicChemistryTutor",
-          channel: "The Organic Chemistry Tutor",
-        },
-        {
-          title: "Motion and Forces Tutorial",
-          url: "https://www.youtube.com/c/khanacademy",
-          channel: "Khan Academy",
-        },
-      ],
-      chemistry: [
-        {
-          title: "Organic Chemistry - Complete Reactions",
-          url: "https://www.youtube.com/c/TheOrganicChemistryTutor",
-          channel: "The Organic Chemistry Tutor",
-        },
-        {
-          title: "Inorganic Chemistry Made Simple",
-          url: "https://www.youtube.com/channel/UCXDMnCUluDvjQwbDVWXwbow",
-          channel: "Chemistry Wallah",
-        },
-        {
-          title: "Chemical Bonding Explained",
-          url: "https://www.youtube.com/c/khanacademy",
-          channel: "Khan Academy",
-        },
-      ],
-      mathematics: [
-        {
-          title: "Calculus - Complete Course",
-          url: "https://www.youtube.com/c/ProfessorLeonard",
-          channel: "Professor Leonard",
-        },
-        {
-          title: "Algebra and Functions - Basics to Advanced",
-          url: "https://www.youtube.com/c/TheOrganicChemistryTutor",
-          channel: "The Organic Chemistry Tutor",
-        },
-        {
-          title: "Trigonometry Mastery Course",
-          url: "https://www.youtube.com/c/khanacademy",
-          channel: "Khan Academy",
-        },
-      ],
-      biology: [
-        {
-          title: "Complete Biology Course for Exams",
-          url: "https://www.youtube.com/channel/UC-7VmZlhvBcXVu_9V3JJDdA",
-          channel: "Crash Course Biology",
-        },
-        {
-          title: "Cell Biology Deep Dive",
-          url: "https://www.youtube.com/c/AmoebaSisters",
-          channel: "Amoeba Sisters",
-        },
-        {
-          title: "Genetics and Evolution Explained",
-          url: "https://www.youtube.com/c/khanacademy",
-          channel: "Khan Academy",
-        },
-      ],
-      english: [
-        {
-          title: "English Grammar Complete Course",
-          url: "https://www.youtube.com/c/EnglishAddict",
-          channel: "English Addict with Mr. Duncan",
-        },
-        {
-          title: "Literature Analysis and Writing",
-          url: "https://www.youtube.com/c/CrashCourse",
-          channel: "Crash Course Literature",
-        },
-        {
-          title: "Speaking and Communication Skills",
-          url: "https://www.youtube.com/c/TED",
-          channel: "TED-Ed",
-        },
-      ],
-      history: [
-        {
-          title: "World History Complete Guide",
-          url: "https://www.youtube.com/c/CrashCourse",
-          channel: "Crash Course World History",
-        },
-        {
-          title: "Indian History - Complete Series",
-          url: "https://www.youtube.com/channel/UCXDMnCUluDvjQwbDVWXwbow",
-          channel: "History Simplified",
-        },
-        {
-          title: "Ancient Civilizations",
-          url: "https://www.youtube.com/c/khanacademy",
-          channel: "Khan Academy",
-        },
-      ],
-    };
-
-    const subjectKey = subject.toLowerCase();
-    return (
-      videoDatabase[subjectKey] || [
-        {
-          title: "General Learning Resources",
-          url: "https://www.youtube.com/c/khanacademy",
-          channel: "Khan Academy",
-        },
-        {
-          title: "Educational Course Platform",
-          url: "https://www.youtube.com/c/Coursera",
-          channel: "Coursera",
-        },
-        {
-          title: "Subject Deep Dive Course",
-          url: "https://www.youtube.com/c/CrashCourse",
-          channel: "Crash Course",
-        },
-      ]
-    );
   };
 
   return (

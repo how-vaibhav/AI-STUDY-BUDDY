@@ -22,7 +22,7 @@ const GROQ_MODEL = 'llama-3.1-8b-instant';
  */
 export async function generateWithGroq(
 	prompt: string,
-	options: GroqOptions = {},
+	options: GroqOptions & { apiKey?: string } = {},
 ): Promise<string> {
 	try {
 		const {
@@ -33,9 +33,16 @@ export async function generateWithGroq(
 			presencePenalty = 0,
 		} = options;
 
+		// Resolve API key: prefer explicit option, fall back to environment
+		const apiKey = (options as any).apiKey || process.env.GROQ_API_KEY;
+		if (!apiKey) {
+			throw new Error('Groq API key is missing. Pass it via the "apiKey" option or set GROQ_API_KEY in the environment.');
+		}
+
 		const result = await generateText({
 			model: groq(GROQ_MODEL),
 			prompt,
+			apiKey,
 			temperature,
 			topP,
 			frequencyPenalty: frequencyPenalty === 0 ? undefined : frequencyPenalty,
@@ -69,9 +76,16 @@ export async function streamWithGroq(
 			presencePenalty = 0,
 		} = options;
 
+		// Resolve API key: prefer explicit option, fall back to environment
+		const apiKey = (options as any).apiKey || process.env.GROQ_API_KEY;
+		if (!apiKey) {
+			throw new Error('Groq API key is missing. Pass it via the "apiKey" option or set GROQ_API_KEY in the environment.');
+		}
+
 		const stream = await streamText({
 			model: groq(GROQ_MODEL),
 			prompt,
+			apiKey,
 			temperature,
 			topP,
 			frequencyPenalty: frequencyPenalty === 0 ? undefined : frequencyPenalty,
@@ -580,4 +594,50 @@ Provide:
 		temperature: 0.6,
 		maxTokens: 1500,
 	});
+}
+
+/**
+ * Detect the subject and topic of content using Groq
+ * Analyzes uploaded files or text to determine academic subject and specific topic
+ * Truncates content to 8000 chars to avoid token limits
+ */
+export async function detectContentSubjectAndTopic(
+	content: string,
+): Promise<{ subject: string; topic: string }> {
+	if (!content || content.trim().length === 0) {
+		return { subject: 'general', topic: 'unknown' };
+	}
+
+	// Truncate to first 8000 characters to avoid exceeding token limits
+	const truncatedContent = content.substring(0, 8000);
+
+	const prompt = `Analyze this academic content and identify ONLY the subject and topic. Be concise.
+
+Content:
+${truncatedContent}
+
+Respond in JSON ONLY:
+{"subject": "lowercase_subject", "topic": "topic_name"}`;
+
+	try {
+		const response = await generateWithGroq(prompt, {
+			temperature: 0.3,
+			maxTokens: 100,
+		});
+
+		// Parse JSON response
+		const jsonMatch = response.match(/\{[\s\S]*\}/);
+		if (jsonMatch) {
+			const parsed = JSON.parse(jsonMatch[0]);
+			return {
+				subject: parsed.subject?.toLowerCase() || 'general',
+				topic: parsed.topic || 'unknown',
+			};
+		}
+
+		return { subject: 'general', topic: 'unknown' };
+	} catch (error) {
+		console.error('[Groq] Error detecting content subject/topic:', error);
+		return { subject: 'general', topic: 'unknown' };
+	}
 }

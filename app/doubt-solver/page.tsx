@@ -16,9 +16,10 @@ import {
 } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { usePDFWorker } from "@/hooks/use-pdf-worker";
-import { MessageCircle, Send, Lightbulb, Upload, X, File } from "lucide-react";
+import { MessageCircle, Send, Lightbulb, Upload, X, File, Play, Download } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { processUploadedFile } from "@/lib/file-utils";
+import generateYoutubeVideosFromContent from "../../lib/video-utils";
 
 interface currentDoubt {
   id: string;
@@ -49,12 +50,47 @@ interface UploadedFile {
   uploadedAt: number;
 }
 
+const convertMarkdownToHTML = (markdown: string, colorScheme: 'emerald' | 'purple') => {
+  let html = markdown;
+
+  // Headers
+  html = html.replace(/^#### (.*$)/gm, `<h4 style="font-size: 1rem; font-weight: bold; color: ${colorScheme === 'emerald' ? '#059669' : '#9333ea'}; margin-top: 0.5rem; margin-bottom: 0.25rem;">$1</h4>`);
+  html = html.replace(/^### (.*$)/gm, `<h3 style="font-size: 1.125rem; font-weight: bold; color: ${colorScheme === 'emerald' ? '#059669' : '#9333ea'}; margin-top: 0.75rem; margin-bottom: 0.5rem;">$1</h3>`);
+  html = html.replace(/^## (.*$)/gm, `<h2 style="font-size: 1.25rem; font-weight: bold; color: ${colorScheme === 'emerald' ? '#047857' : '#7c3aed'}; margin-top: 1rem; margin-bottom: 0.5rem;">$1</h2>`);
+  html = html.replace(/^# (.*$)/gm, `<h1 style="font-size: 1.5rem; font-weight: bold; color: ${colorScheme === 'emerald' ? '#047857' : '#7c3aed'}; margin-top: 1.25rem; margin-bottom: 0.75rem;">$1</h1>`);
+
+  // Bold
+  html = html.replace(/\*\*(.*?)\*\*/g, `<strong style="font-weight: bold; color: ${colorScheme === 'emerald' ? '#111827' : '#7c3aed'};">$1</strong>`);
+
+  // Italic
+  html = html.replace(/\*(.*?)\*/g, `<em style="font-style: italic; color: ${colorScheme === 'emerald' ? '#374151' : '#9333ea'};">$1</em>`);
+
+  // Code inline
+  html = html.replace(/`([^`]+)`/g, `<code style="background-color: ${colorScheme === 'emerald' ? '#d1fae5' : '#faf5ff'}; color: ${colorScheme === 'emerald' ? '#065f46' : '#581c87'}; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-family: monospace; font-size: 0.875rem;">$1</code>`);
+
+  // Code block
+  html = html.replace(/```([\s\S]*?)```/g, `<pre style="background-color: ${colorScheme === 'emerald' ? '#111827' : 'rgba(147, 51, 234, 0.3)'}; color: ${colorScheme === 'emerald' ? '#6ee7b7' : '#faf5ff'}; padding: 0.75rem 1rem; border-radius: 0.25rem; font-family: monospace; font-size: 0.875rem; overflow-x: auto; margin: 0.75rem 0;"><code>$1</code></pre>`);
+
+  // Lists
+  html = html.replace(/^- (.*$)/gm, `<li style="color: #374151; margin-left: 1rem; line-height: 1.625;">$1</li>`);
+  html = html.replace(/^\d+\. (.*$)/gm, `<li style="color: #374151; margin-left: 1rem; line-height: 1.625;">$1</li>`);
+
+  // Paragraphs
+  html = html.split('\n\n').map(p => p.trim()).filter(p => p).map(p => `<p style="color: #374151; line-height: 1.625; margin-bottom: 0.75rem;">${p.replace(/\n/g, '<br>')}</p>`).join('');
+
+  // Wrap lists
+  html = html.replace(/(<li.*<\/li>\s*)+/g, '<ul style="list-style-type: disc; list-style-position: inside; margin-bottom: 0.75rem; margin-left: 0.5rem;">$&</ul>');
+
+  return html;
+};
+
 export default function DoubtSolverPage() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [currentDoubt, setCurrentDoubt] = useState<currentDoubt | null>(null);
   const [doubts, setDoubts] = useState<doubts[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+  const [recommendedVideos, setRecommendedVideos] = useState<Array<{title:string;url:string;channel:string}>>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -213,6 +249,48 @@ export default function DoubtSolverPage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const downloadDoubt = async () => {
+    if (!currentDoubt) return;
+
+    try {
+      const html2pdf = (await import("html2pdf.js")).default;
+
+      const answerHTML = convertMarkdownToHTML(currentDoubt.answer, 'purple');
+
+      const htmlContent = `
+        <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto;">
+          <h1 style="color: #7c3aed; font-size: 24px; margin-bottom: 10px;">${currentDoubt.question}</h1>
+          <p style="color: #888; font-size: 12px; margin: 5px 0;">Generated: ${new Date().toLocaleDateString()}</p>
+          <div style="margin-top: 20px;">
+            ${answerHTML}
+          </div>
+        </div>
+      `;
+
+      const options = {
+        margin: 1,
+        filename: `doubt-solution-${Date.now()}.pdf`,
+        image: { type: 'jpeg' as const, quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'in' as const, format: 'a4' as const, orientation: 'portrait' as const }
+      };
+
+      await html2pdf().set(options).from(htmlContent).save();
+
+      toast({
+        title: "Downloaded",
+        description: "Doubt solution downloaded as PDF successfully",
+      });
+    } catch (error) {
+      console.error("PDF generation error:", error);
+      toast({
+        title: "Error",
+        description: "Failed to download PDF. Try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -238,12 +316,17 @@ export default function DoubtSolverPage() {
 
     try {
       // Prepare file context with better formatting
-      const fileContext =
+      let fileContext =
         uploadedFiles.length > 0
           ? uploadedFiles
               .map((f) => `### ${f.name}\n${f.content}`)
               .join("\n\n---\n\n")
           : null;
+
+      // Truncate file context to max 10000 characters to stay within Groq limits
+      if (fileContext && fileContext.length > 10000) {
+        fileContext = fileContext.substring(0, 10000) + "\n\n[... content truncated ...]";
+      }
 
       const response = await fetch("/api/solve-doubt", {
         method: "POST",
@@ -258,6 +341,35 @@ export default function DoubtSolverPage() {
       if (!response.ok || !data.success) {
         throw new Error(data.error || "Failed to solve doubt");
       }
+
+      // Extract answer text
+      const answerText = data.answer || "";
+
+      // Detect subject and topic via server API (server-side Groq call)
+      const contentForAnalysis = fileContext || answerText;
+      let detectedSubject = 'general';
+      let detectedTopic = '';
+      try {
+        const res = await fetch('/api/detect-subject', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content: contentForAnalysis }),
+        });
+        const j = await res.json();
+        if (res.ok && j.success) {
+          if (j.subject) detectedSubject = j.subject;
+          if (j.topic) detectedTopic = j.topic;
+        }
+      } catch (err) {
+        console.warn('[doubt-solver] Subject detection failed, falling back to hint', err);
+      }
+
+      // Prefer user-selected subject if provided, otherwise use detected subject
+      const effectiveSubject = formData.subject && formData.subject.trim() ? formData.subject.trim() : detectedSubject;
+
+      // Generate recommended videos based on detected topic (preferred) then subject
+      const vids = generateYoutubeVideosFromContent(contentForAnalysis, effectiveSubject, detectedTopic);
+      setRecommendedVideos(vids);
 
       setCurrentDoubt(data);
 
@@ -438,14 +550,27 @@ export default function DoubtSolverPage() {
               >
                 <Card className="glass-card border-purple-200/60 hover:shadow-lg transition-shadow">
                   <CardHeader>
-                    <CardTitle className="text-lg">
-                      {currentDoubt.question}
-                    </CardTitle>
-                    <CardDescription>
-                      {currentDoubt.subject && `📘 ${currentDoubt.subject}`}{" "}
-                      {currentDoubt.examType &&
-                        ` • 🎯 ${currentDoubt.examType}`}
-                    </CardDescription>
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <CardTitle className="text-lg">
+                          {currentDoubt.question}
+                        </CardTitle>
+                        <CardDescription>
+                          {currentDoubt.subject && `📘 ${currentDoubt.subject}`}{" "}
+                          {currentDoubt.examType &&
+                            ` • 🎯 ${currentDoubt.examType}`}
+                        </CardDescription>
+                      </div>
+                      <Button
+                        onClick={downloadDoubt}
+                        variant="outline"
+                        size="sm"
+                        className="ml-4"
+                      >
+                        <Download className="w-4 h-4 mr-2" />
+                        PDF
+                      </Button>
+                    </div>
                   </CardHeader>
 
                   <CardContent className="pt-6">
@@ -510,48 +635,37 @@ export default function DoubtSolverPage() {
                         📺 Recommended Videos
                       </h3>
                       <div className="grid grid-cols-1 gap-3">
-                        {[
-                          {
-                            title: "Understanding Core Concepts",
-                            channel: "Physics Academy",
-                            duration: "12:34",
-                            url: "https://www.youtube.com/results?search_query=understanding+core+concepts",
-                          },
-                          {
-                            title: "Advanced Problem Solving",
-                            channel: "Math Mastery",
-                            duration: "18:45",
-                            url: "https://www.youtube.com/results?search_query=advanced+problem+solving",
-                          },
-                          {
-                            title: "In-Depth Explanation",
-                            channel: "Science Hub",
-                            duration: "25:20",
-                            url: "https://www.youtube.com/results?search_query=in+depth+explanation",
-                          },
-                        ].map((video, idx) => (
-                          <a
-                            key={idx}
-                            href={video.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="p-3 rounded-lg bg-linear-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 border border-purple-200/40 dark:border-purple-500/30 hover:shadow-md transition-all hover:border-purple-400 group"
-                          >
-                            <div className="flex items-start gap-3">
-                              <div className="w-12 h-12 rounded bg-linear-to-br from-purple-500 to-blue-500 shrink-0 flex items-center justify-center text-white font-bold">
-                                ▶
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="font-semibold text-sm text-gray-800 dark:text-gray-200 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition line-clamp-2">
-                                  {video.title}
-                                </p>
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  {video.channel} • {video.duration}
-                                </p>
-                              </div>
-                            </div>
-                          </a>
-                        ))}
+                                                  {(() => {
+                                                      const defaultVideos = [
+                                                          { title: 'Understanding Core Concepts', channel: 'Educational', url: 'https://www.youtube.com/results?search_query=understanding+core+concepts' },
+                                                          { title: 'Advanced Problem Solving', channel: 'Educational', url: 'https://www.youtube.com/results?search_query=advanced+problem+solving' },
+                                                          { title: 'In-Depth Explanation', channel: 'Educational', url: 'https://www.youtube.com/results?search_query=in+depth+explanation' },
+                                                      ];
+
+                                                      const videosToShow = (recommendedVideos && recommendedVideos.length > 0) ? recommendedVideos : defaultVideos;
+
+                                                      return videosToShow.map((video, idx) => (
+                                                          <a
+                                                              key={idx}
+                                                              href={video.url}
+                                                              target="_blank"
+                                                              rel="noopener noreferrer"
+                                                              className="p-3 rounded-lg bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 border border-purple-200/40 dark:border-purple-500/30 hover:shadow-md transition-all hover:border-purple-400 group"
+                                                          >
+                                                              <div className="flex items-start gap-3 mb-2">
+                                                                  <div className="p-2 rounded-lg bg-purple-100 group-hover:bg-purple-200 transition">
+                                                                      <Play className="w-4 h-4 text-purple-600" />
+                                                                  </div>
+                                                                  <div className="flex-1 min-w-0">
+                                                                      <h4 className="font-semibold text-sm text-gray-900 group-hover:text-blue-600 transition line-clamp-2">
+                                                                          {video.title}
+                                                                      </h4>
+                                                                      <p className="text-xs text-gray-600 mt-1">{video.channel}</p>
+                                                                  </div>
+                                                              </div>
+                                                          </a>
+                                                      ));
+                                                  })()}
                       </div>
                     </div>
                   </CardContent>
