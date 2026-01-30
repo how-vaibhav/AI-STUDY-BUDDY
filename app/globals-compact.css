@@ -1,0 +1,28 @@
+/* Compact View - Reduce spacing and padding */
+html[data-compact="true"] {
+  --spacing-factor: 0.75;
+}
+
+html[data-compact="true"] .card {
+  padding: 0.75rem;
+}
+
+html[data-compact="true"] [class*="px-4"] {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+html[data-compact="true"] [class*="py-4"] {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+html[data-compact="true"] [class*="gap-4"] {
+  gap: 0.5rem;
+}
+
+/* Disable animations globally */
+html[data-animations-disabled="true"] * {
+  animation: none !important;
+  transition: none !important;
+}

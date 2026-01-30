@@ -9,12 +9,13 @@ export async function POST(request: Request) {
 		const question = body.question || '';
 		const subject = body.subject || 'General';
 		const answerType = body.answerType || 'Medium';
+		const fileContext = body.fileContext || null;
 
 		if (!question || question.trim().length === 0) {
 			return Response.json({ error: 'Question is required' }, { status: 400 });
 		}
 
-		const answer = await solveDubt(question, subject, answerType);
+		const answer = await solveDubt(question, subject, answerType, fileContext);
 
 		const { error: insertError } = await supabase
 			.from('Doubts')

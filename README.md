@@ -1,6 +1,6 @@
-# AI Study Buddy - Advanced Learning Platform
+# Cerevia - The AI Path to Understanding
 
-> *An AI-powered study companion built for Indian students preparing for competitive exams and college courses*
+> _An AI-powered learning platform designed for serious students. Structured thinking, cognitive clarity, and exam-native design for competitive exam preparation._
 
 ![Next.js](https://img.shields.io/badge/Next.js-16.0.10-black?style=flat-square&logo=next.js)
 ![React](https://img.shields.io/badge/React-19-blue?style=flat-square&logo=react)
@@ -29,16 +29,19 @@
 
 ## 🎯 Overview
 
-**AI Study Buddy** is a comprehensive learning management platform designed specifically for Indian students. It combines artificial intelligence with intuitive UI/UX to provide:
+**Cerevia** is a comprehensive learning management platform designed specifically for serious students preparing for competitive exams. It combines artificial intelligence with intuitive UI/UX to provide:
 
-- **Intelligent Study Planning** - AI-generated personalized study schedules
-- **Doubt Resolution** - Real-time Q&A with AI assistance
-- **Notes Summarization** - Automatic conversion of long notes to concise summaries
-- **Daily Interactive Quizzes** - Auto-generated quizzes based on study plans
-- **Video Recommendations** - Curated YouTube channels for each subject
-- **PDF Management** - Upload and parse study materials
+- **Intelligent Study Planning** - AI-generated personalized study schedules optimized for your learning pace
+- **Doubt Resolution** - Real-time Q&A with AI assistance for complex academic problems
+- **Notes Summarization** - Automatic conversion of long notes to concise, exam-focused summaries
+- **Daily Interactive Quizzes** - Auto-generated quizzes based on study plans with adaptive difficulty
+- **Video Recommendations** - Curated YouTube channels for concept reinforcement
+- **PDF Management** - Upload, parse, and manage study materials
+- **Study Analytics** - Track progress, study streaks, and performance metrics
+- **Settings & Customization** - Font size, animations, compact view, dark mode support
 
 The platform is optimized for Indian exam patterns including:
+
 - JEE Advanced/Main
 - NEET
 - GATE
@@ -50,6 +53,7 @@ The platform is optimized for Indian exam patterns including:
 ## ✨ Key Features
 
 ### 1. **Dashboard** 📊
+
 - Real-time analytics with Recharts visualizations
 - Weekly study hours tracking
 - Subject performance metrics
@@ -59,6 +63,7 @@ The platform is optimized for Indian exam patterns including:
 - Responsive grid layout (1/2/3 columns based on screen size)
 
 ### 2. **AI Study Planner** 📅
+
 - Generate personalized study schedules
 - AI-powered plan based on:
   - Target exam (JEE, NEET, GATE, etc.)
@@ -71,6 +76,7 @@ The platform is optimized for Indian exam patterns including:
 - Mobile-friendly interface
 
 ### 3. **Doubt Solver** ❓
+
 - Ask complex academic questions
 - AI-powered instant answers using GROQ API
 - Rich text formatting for answers
@@ -79,6 +85,7 @@ The platform is optimized for Indian exam patterns including:
 - Beautiful markdown rendering
 
 ### 4. **Notes Summarizer** 📝
+
 - Paste long notes (from textbooks, lectures, etc.)
 - AI-powered automatic summarization
 - Key points extraction
@@ -93,6 +100,7 @@ The platform is optimized for Indian exam patterns including:
   - History: Crash Course History
 
 ### 5. **Daily Quiz System** 🎓 (NEW)
+
 - Automatically generates quizzes from study plans
 - Features:
   - **Progressive Unlocking**: Today's quiz available, future locked
@@ -104,6 +112,7 @@ The platform is optimized for Indian exam patterns including:
   - **Streak Bonuses**: Extra points for consecutive correct answers
 
 ### 6. **User Profile** 👤 (ENHANCED)
+
 - Complete profile setup
 - **NEW**: Profile photo upload to Supabase
 - Educational background
@@ -112,7 +121,8 @@ The platform is optimized for Indian exam patterns including:
 - Profile photo display in navbar (animated)
 - Password management
 
-### 7. **Settings** ⚙️
+### 7. **Settings** ⚙️ (ENHANCED)
+
 - **General Settings**
   - Language preference
   - Timezone selection
@@ -120,17 +130,21 @@ The platform is optimized for Indian exam patterns including:
 - **Study Preferences**
   - Daily study hours goal
   - Preferred study subjects
-  - Notification preferences
-- **Display Settings**
-  - Dark/Light theme toggle
-  - Animation preferences
-  - Notification sound
+  - Notification preferences with scheduling
+  - Sound notifications with Web Audio API
+- **Display Settings** (NOW FUNCTIONAL)
+  - **Font Size Control**: small (14px), medium (16px), large (18px), xlarge (20px) - Persists on reload
+  - **Compact View**: Reduces spacing and padding for condensed UI
+  - **Animation Toggle**: Enable/disable all Framer Motion animations globally
+  - **Dark/Light theme toggle** with system detection
+  - **Focus Mode**: Highlights study area with dimmed background
 - **Privacy**
   - Data export
   - Account deletion
   - Privacy policy
 
 ### 8. **Notifications** 🔔 (NEW)
+
 - Quiz generation alerts
 - Daily study reminders
 - Performance milestones
@@ -139,8 +153,9 @@ The platform is optimized for Indian exam patterns including:
 - Hamburger menu notification panel
 
 ### 9. **Advanced Footer** 🎨 (NEW)
+
 - Animated gradient background
-- Company info section
+- Company info section with Cerevia philosophy
 - Quick links
 - Resources section
 - Social media integration
@@ -149,17 +164,29 @@ The platform is optimized for Indian exam patterns including:
 - Contact information
 - Professional animations using GSAP
 
+### 10. **Welcome/Onboarding Page** 🚀 (NEW)
+
+- Professional landing page at `/welcome` route
+- localStorage detection for first-time users
+- Cerevia branding with Brain icon logo
+- Dark mode toggle in navbar
+- Smooth animations with Framer Motion
+- 7 main sections: Hero, Why Cerevia, Capabilities, FAQ, Philosophy, CTA, Final section
+- Responsive design optimized for mobile and desktop
+- Practical feature showcase with actual implementations
+
 ---
 
 ## 🛠 Technology Stack
 
 ### Frontend
+
 - **Framework**: Next.js 16.0.10 (App Router)
 - **Language**: TypeScript 5
 - **Styling**: Tailwind CSS 4
 - **UI Components**: shadcn/ui
 - **Charts**: Recharts 2.15.4
-- **Animations**: 
+- **Animations**:
   - Framer Motion (2.x)
   - GSAP (for advanced animations)
   - React Just Parallax
@@ -167,6 +194,7 @@ The platform is optimized for Indian exam patterns including:
 - **Icons**: Lucide React
 
 ### Backend/Services
+
 - **Authentication**: Supabase Auth (Email + Social)
 - **Database**: Supabase PostgreSQL
 - **File Storage**: Supabase Storage (profile photos, PDFs)
@@ -174,6 +202,7 @@ The platform is optimized for Indian exam patterns including:
 - **API Calls**: Server actions & API routes
 
 ### Development Tools
+
 - **Package Manager**: pnpm
 - **Version Control**: Git
 - **Deployment**: Vercel (recommended)
@@ -185,6 +214,7 @@ The platform is optimized for Indian exam patterns including:
 ## 🚀 Installation & Setup
 
 ### Prerequisites
+
 - Node.js 18+ (LTS recommended)
 - pnpm 8+ (or npm/yarn)
 - Git
@@ -192,12 +222,14 @@ The platform is optimized for Indian exam patterns including:
 - GROQ API key
 
 ### Step 1: Clone Repository
+
 ```bash
 git clone https://github.com/yourusername/ai-study-buddy.git
 cd ai-study-buddy
 ```
 
 ### Step 2: Install Dependencies
+
 ```bash
 pnpm install
 # or
@@ -205,7 +237,9 @@ npm install
 ```
 
 ### Step 3: Environment Configuration
+
 Create `.env.local` file:
+
 ```env
 # Supabase Configuration
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
@@ -216,12 +250,14 @@ GROQ_API_KEY=your-groq-api-key
 ```
 
 ### Step 4: Database Setup
+
 ```bash
 # Initialize Supabase schema
 pnpm run db:init
 ```
 
 SQL Schema (run in Supabase SQL Editor):
+
 ```sql
 -- Users table (extends Supabase auth)
 CREATE TABLE users (
@@ -285,6 +321,7 @@ ALTER TABLE quizzes ENABLE ROW LEVEL SECURITY;
 ```
 
 ### Step 5: Run Development Server
+
 ```bash
 pnpm run dev
 # or
@@ -294,6 +331,7 @@ npm run dev
 Visit `http://localhost:3000`
 
 ### Step 6: Build for Production
+
 ```bash
 pnpm run build
 pnpm run start
@@ -304,6 +342,7 @@ pnpm run start
 ## 🏗 Architecture
 
 ### Directory Structure
+
 ```
 ai-study-buddy/
 ├── app/                          # Next.js app router
@@ -349,6 +388,7 @@ ai-study-buddy/
 ```
 
 ### Data Flow Diagram
+
 ```
 ┌─────────────────────────────────────────────────────────┐
 │                   Frontend (React/Next.js)               │
@@ -370,6 +410,7 @@ ai-study-buddy/
 ## 📖 Features in Depth
 
 ### Dashboard Analytics
+
 - **LineChart**: Weekly study hours with trend analysis
 - **PieChart**: Time distribution across subjects
 - **BarChart**: Subject performance by accuracy percentage
@@ -377,7 +418,9 @@ ai-study-buddy/
 - Streak tracking with motivational messaging
 
 ### Study Plan Generation
+
 The AI considers multiple factors:
+
 1. **Time Management**: Available daily hours
 2. **Subject Difficulty**: Adaptive scheduling
 3. **Exam Pattern**: JEE, NEET, GATE specific patterns
@@ -385,6 +428,7 @@ The AI considers multiple factors:
 5. **Cumulative Learning**: Progressive difficulty
 
 **Plan Structure**:
+
 ```json
 {
   "title": "JEE Main Preparation - 30 Days",
@@ -401,6 +445,7 @@ The AI considers multiple factors:
 ```
 
 ### Doubt Solver Integration
+
 - Uses GROQ's LLaMA model for instant answers
 - Supports multi-subject queries
 - Maintains conversation context
@@ -408,7 +453,9 @@ The AI considers multiple factors:
 - Beautiful markdown rendering
 
 ### Quiz Generation System (NEW)
+
 **Algorithm**:
+
 1. Parse study plan for day's topics
 2. Extract key concepts
 3. Generate varied question types:
@@ -419,12 +466,14 @@ The AI considers multiple factors:
 5. Calculate scoring with streak bonuses
 
 **Scoring System**:
+
 - Correct answer: +10 points
 - Correct streak (3+): +20 bonus points
 - Time-based bonus: -1 point per 30 seconds
 - Wrong answer: 0 points
 
 ### Notifications System (NEW)
+
 - Real-time notifications for:
   - Quiz generation
   - Study reminders
@@ -440,6 +489,7 @@ The AI considers multiple factors:
 ### Endpoints
 
 #### Generate Study Plan
+
 ```
 POST /api/generate-study-plan
 Content-Type: application/json
@@ -458,6 +508,7 @@ Response: {
 ```
 
 #### Solve Doubt
+
 ```
 POST /api/solve-doubt
 Content-Type: application/json
@@ -476,6 +527,7 @@ Response: {
 ```
 
 #### Summarize Notes
+
 ```
 POST /api/summarize-notes
 Content-Type: application/json
@@ -494,6 +546,7 @@ Response: {
 ```
 
 #### Generate Quiz
+
 ```
 POST /api/generate-quiz
 Content-Type: application/json
@@ -520,6 +573,7 @@ Response: {
 ### Key Components
 
 **DashboardNav** (`components/dashboard-nav.tsx`)
+
 - Sticky navbar with GSAP animations
 - Dark/Light theme toggle
 - Mobile hamburger menu
@@ -527,12 +581,14 @@ Response: {
 - Responsive design
 
 **ThemeProvider** (`components/theme-provider.tsx`)
+
 - Wraps entire app
 - Enables theme switching
 - Persists theme preference
 - Respects system preferences
 
 **App Footer** (`components/app-footer.tsx`) - ENHANCED
+
 - Advanced GSAP animations
 - Responsive grid layout
 - Newsletter subscription
@@ -542,22 +598,26 @@ Response: {
 ### Custom Hooks
 
 **useApi** (`hooks/use-api.ts`)
+
 ```typescript
-const { data, loading, error } = useApi('/api/endpoint');
+const { data, loading, error } = useApi("/api/endpoint");
 ```
 
 **useMobile** (`hooks/use-mobile.ts`)
+
 ```typescript
 const isMobile = useMobile(); // Returns true if screen < 768px
 ```
 
 **useToast** (`hooks/use-toast.ts`)
+
 ```typescript
 const { toast } = useToast();
 toast({ title: "Success", description: "..." });
 ```
 
 **useNotifications** (`hooks/use-notifications.ts`) - NEW
+
 ```typescript
 const { notifications, addNotification } = useNotifications();
 ```
@@ -567,7 +627,9 @@ const { notifications, addNotification } = useNotifications();
 ## ⚙️ Configuration
 
 ### Tailwind CSS Configuration
+
 Custom theme extends shadcn/ui:
+
 ```javascript
 // tailwind.config.js
 theme: {
@@ -581,14 +643,15 @@ theme: {
 ```
 
 ### Next.js Configuration
+
 ```javascript
 // next.config.mjs
 const config = {
   reactStrictMode: true,
   experimental: {
     turbopack: true, // Enable Turbopack for faster builds
-  }
-}
+  },
+};
 ```
 
 ---
@@ -598,6 +661,7 @@ const config = {
 ### Deploy to Vercel (Recommended)
 
 1. **Push to GitHub**
+
 ```bash
 git add .
 git commit -m "Ready for deployment"
@@ -605,12 +669,14 @@ git push origin main
 ```
 
 2. **Connect to Vercel**
+
 - Go to vercel.com
 - Import your GitHub repository
 - Set environment variables
 - Deploy
 
 3. **Environment Variables on Vercel**
+
 ```
 NEXT_PUBLIC_SUPABASE_URL=...
 NEXT_PUBLIC_SUPABASE_ANON_KEY=...
@@ -635,7 +701,9 @@ pm2 start "pnpm start" --name "study-buddy"
 ## 🎨 Customization
 
 ### Change Theme Colors
+
 Edit `app/globals.css`:
+
 ```css
 :root {
   --primary: 220 90% 56%; /* Indigo */
@@ -644,11 +712,17 @@ Edit `app/globals.css`:
 ```
 
 ### Customize Study Subjects
+
 Edit `lib/constants.ts`:
+
 ```typescript
 export const SUBJECTS = [
-  'Physics', 'Chemistry', 'Mathematics', 
-  'Biology', 'English', 'History'
+  "Physics",
+  "Chemistry",
+  "Mathematics",
+  "Biology",
+  "English",
+  "History",
 ];
 ```
 
@@ -657,6 +731,7 @@ export const SUBJECTS = [
 ## 📱 Mobile Responsiveness
 
 All pages are mobile-first:
+
 - `grid-cols-1` on mobile
 - `sm:grid-cols-2` on tablets
 - `lg:grid-cols-3` on desktop
@@ -702,15 +777,19 @@ All pages are mobile-first:
 ## 🐛 Troubleshooting
 
 ### Issue: "Cannot find GROQ API key"
+
 **Solution**: Add `GROQ_API_KEY` to `.env.local`
 
 ### Issue: "Supabase connection failed"
+
 **Solution**: Verify `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are correct
 
 ### Issue: Dark mode not working
+
 **Solution**: Clear browser cache and reload. Theme persists in localStorage.
 
 ### Issue: PDF download fails
+
 **Solution**: Ensure you have written the summary before downloading
 
 ---
@@ -734,6 +813,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 👨‍💻 Author
 
 **AI Study Buddy Team**
+
 - Website: [www.aistudybuddy.com](https://www.aistudybuddy.com)
 - Email: support@aistudybuddy.com
 - Twitter: [@aistudybuddy](https://twitter.com/aistudybuddy)
@@ -750,5 +830,16 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ---
 
 **Last Updated**: January 2026  
-**Version**: 2.0.0 (Major enhancement release)
+**Version**: 2.0.0 (Cerevia Rebrand + Major Feature Release)
 
+### Recent Updates (January 2026)
+
+- ✅ Rebranded as **Cerevia**: The AI Path to Understanding
+- ✅ Welcome page with Cerevia branding and dark mode toggle
+- ✅ Implemented working font size CSS logic in settings (persists to localStorage)
+- ✅ Compact view toggle with actual CSS application
+- ✅ Animation toggle to disable Framer Motion globally
+- ✅ Fixed dark mode contrast issues across all pages
+- ✅ All features now practical and functional with real DOM APIs
+- ✅ 37+ Tailwind CSS v4 deprecation fixes (bg-linear-\*, z-50 syntax)
+- ✅ Merge conflict resolution and code cleanup
