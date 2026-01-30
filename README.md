@@ -2,6 +2,11 @@
 
 > _An AI-powered learning platform designed for serious students. Structured thinking, cognitive clarity, and exam-native design for competitive exam preparation._
 
+## 🌐 Live Application
+
+🚀 **Try Cerevia Now**  
+🔗 https://ai-study-buddy-self.vercel.app/login
+
 ![Next.js](https://img.shields.io/badge/Next.js-16.0.10-black?style=flat-square&logo=next.js)
 ![React](https://img.shields.io/badge/React-19-blue?style=flat-square&logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square&logo=typescript)
