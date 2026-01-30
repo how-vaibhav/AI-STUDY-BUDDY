@@ -36,6 +36,8 @@ export function DashboardNav() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string>("U");
 
   const drawerRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -45,7 +47,29 @@ export function DashboardNav() {
     setMounted(true);
     // Fetch notifications on mount
     fetchNotifications();
+    // Fetch profile photo and name
+    fetchProfileData();
   }, []);
+
+  const fetchProfileData = async () => {
+    try {
+      // Fetch profile photo
+      const photoResponse = await fetch("/api/profile-photo");
+      const photoData = await photoResponse.json();
+      if (photoData.success && photoData.publicUrl) {
+        setProfilePhoto(photoData.publicUrl);
+      }
+
+      // Fetch profile name
+      const profileResponse = await fetch("/api/profile-info");
+      const profileResult = await profileResponse.json();
+      if (profileResult.success && profileResult.data?.name) {
+        setUserName(profileResult.data.name.charAt(0).toUpperCase());
+      }
+    } catch (error) {
+      console.error("Error fetching profile data:", error);
+    }
+  };
 
   const fetchNotifications = async () => {
     try {
@@ -240,9 +264,17 @@ export function DashboardNav() {
               <div className="relative">
                 <button
                   onClick={() => setProfileOpen(!profileOpen)}
-                  className="h-10 w-10 rounded-full bg-linear-to-br from-indigo-600 to-purple-600 text-white font-semibold shadow-lg hover:scale-110 transition-transform duration-300 flex items-center justify-center ring-2 ring-indigo-400/50"
+                  className="h-10 w-10 rounded-full bg-linear-to-br from-indigo-600 to-purple-600 text-white font-semibold shadow-lg hover:scale-110 transition-transform duration-300 flex items-center justify-center ring-2 ring-indigo-400/50 overflow-hidden"
                 >
-                  U
+                  {profilePhoto ? (
+                    <img
+                      src={profilePhoto}
+                      alt="Profile"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <span>{userName}</span>
+                  )}
                 </button>
 
                 {profileOpen && (
@@ -316,6 +348,38 @@ export function DashboardNav() {
               ref={drawerRef}
               className="absolute right-0 top-0 h-full w-72 bg-background shadow-2xl z-100 flex flex-col"
             >
+              {/* Profile Section */}
+              <div className="px-4 py-4 border-b space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="h-12 w-12 rounded-full bg-linear-to-br from-indigo-600 to-purple-600 text-white font-semibold shadow-lg flex items-center justify-center overflow-hidden">
+                    {profilePhoto ? (
+                      <img
+                        src={profilePhoto}
+                        alt="Profile"
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-lg">{userName}</span>
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold">Profile</p>
+                    <p className="text-xs text-muted-foreground">Tap to edit</p>
+                  </div>
+                </div>
+                <Button
+                  variant="outline"
+                  className="w-full gap-2 justify-start"
+                  onClick={() => {
+                    router.push("/profile");
+                    setMobileMenuOpen(false);
+                  }}
+                >
+                  <User size={16} />
+                  My Profile
+                </Button>
+              </div>
+
               <div className="flex items-center justify-between px-4 h-16 border-b">
                 <span className="font-semibold">Menu</span>
                 <button onClick={() => setMobileMenuOpen(false)}>

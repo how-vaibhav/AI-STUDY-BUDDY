@@ -119,7 +119,7 @@ export default function LoginPage() {
         <div className="absolute inset-0 -z-10 overflow-hidden">
           <div className="orb-a absolute top-20 left-16 w-80 h-80 rounded-full bg-purple-500/25 blur-[120px]" />
           <div className="orb-b absolute bottom-24 right-20 w-96 h-96 rounded-full bg-blue-500/20 blur-[140px]" />
-          <div className="orb-c absolute top-1/2 left-1/3 w-[28rem] h-[28rem] rounded-full bg-indigo-500/15 blur-[160px]" />
+          <div className="orb-c absolute top-1/2 left-1/3 w-md h-112 rounded-full bg-indigo-500/15 blur-[160px]" />
         </div>
 
         {/* Card */}
@@ -139,7 +139,7 @@ export default function LoginPage() {
             "
           >
             <CardHeader className="text-center pt-8 space-y-2">
-              <CardTitle className="text-3xl font-bold bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent">
+              <CardTitle className="text-3xl font-bold bg-linear-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent">
                 AI Study Buddy
               </CardTitle>
               <CardDescription className="text-muted-foreground">
@@ -198,7 +198,7 @@ export default function LoginPage() {
                   disabled={loading}
                   className="
                     w-full h-11 font-semibold
-                    bg-gradient-to-r from-purple-600 to-blue-600
+                    bg-linear-to-r from-purple-600 to-blue-600
                     hover:from-purple-700 hover:to-blue-700
                     transition-all
                   "

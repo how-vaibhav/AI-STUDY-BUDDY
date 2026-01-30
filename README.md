@@ -1,4 +1,4 @@
-# Cerevia - The AI Path to Understanding
+# 🧠 Cerevia - The AI Path to Understanding
 
 > _An AI-powered learning platform designed for serious students. Structured thinking, cognitive clarity, and exam-native design for competitive exam preparation._
 
@@ -7,6 +7,7 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square&logo=typescript)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-4-38B2AC?style=flat-square&logo=tailwind-css)
 ![Supabase](https://img.shields.io/badge/Supabase-Auth%20|%20Storage-green?style=flat-square&logo=supabase)
+![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen?style=flat-square)
 
 ---
 
@@ -29,24 +30,31 @@
 
 ## 🎯 Overview
 
-**Cerevia** is a comprehensive learning management platform designed specifically for serious students preparing for competitive exams. It combines artificial intelligence with intuitive UI/UX to provide:
+**Cerevia** is a comprehensive AI-powered learning management platform designed specifically for serious students preparing for competitive exams. Built with modern web technologies and powered by AI, it provides an intelligent, personalized learning experience.
 
-- **Intelligent Study Planning** - AI-generated personalized study schedules optimized for your learning pace
-- **Doubt Resolution** - Real-time Q&A with AI assistance for complex academic problems
-- **Notes Summarization** - Automatic conversion of long notes to concise, exam-focused summaries
-- **Daily Interactive Quizzes** - Auto-generated quizzes based on study plans with adaptive difficulty
-- **Video Recommendations** - Curated YouTube channels for concept reinforcement
-- **PDF Management** - Upload, parse, and manage study materials
-- **Study Analytics** - Track progress, study streaks, and performance metrics
-- **Settings & Customization** - Font size, animations, compact view, dark mode support
+### What Makes Cerevia Special?
 
-The platform is optimized for Indian exam patterns including:
+✅ **AI-Driven**: Leverages GROQ API with LLaMA models for instant doubt solving
+✅ **Adaptive Learning**: Quizzes adjust difficulty based on performance
+✅ **Mobile-First**: Fully responsive design for all devices
+✅ **Privacy-Focused**: End-to-end encryption, data retention control
+✅ **Offline Ready**: Progressive Web App capabilities
+✅ **Dark Mode**: Eye-friendly interface with system detection
 
-- JEE Advanced/Main
-- NEET
-- GATE
-- Board Exams (12th Standard)
-- Competitive entrance exams
+### Core Features
+
+- 📊 **Intelligent Dashboard** - Real-time analytics and performance tracking
+- 📅 **AI Study Planner** - Personalized study schedules using GROQ AI
+- ❓ **Doubt Solver** - Real-time Q&A with detailed explanations
+- 📝 **Notes Summarizer** - Intelligent note compression with key point extraction
+- 🎓 **Daily Quizzes** - Adaptive, streak-based quiz system
+- 👤 **Smart Profile** - Profile photo upload and exam-specific setup
+- ⚙️ **Advanced Settings** - Font size, animations, compact view, dark mode
+- 🔔 **Smart Notifications** - Quiz alerts, reminders, and achievement tracking
+- 📱 **Responsive Design** - Optimized for mobile, tablet, and desktop
+- 🔐 **Secure Auth** - Supabase JWT with email verification
+
+The platform supports exam types including **JEE Advanced/Main**, **NEET**, **GATE**, **Board Exams**, and more.
 
 ---
 
@@ -177,7 +185,46 @@ The platform is optimized for Indian exam patterns including:
 
 ---
 
-## 🛠 Technology Stack
+## ⚡ Quick Start (5 Minutes)
+
+### 1. Clone & Install
+
+```bash
+git clone https://github.com/yourusername/ai-study-buddy.git
+cd ai-study-buddy
+pnpm install
+```
+
+### 2. Setup Environment
+
+```bash
+cp .env.example .env.local
+# Edit .env.local with your credentials
+```
+
+### 3. Start Development Server
+
+```bash
+pnpm dev
+# Open http://localhost:3000
+```
+
+### 4. Create Supabase Account
+
+- Go to [supabase.com](https://supabase.com)
+- Create new project
+- Get credentials from Project Settings
+- Paste into `.env.local`
+
+### 5. Run Database Schema
+
+- Copy SQL from `scripts/01-init-schema.sql`
+- Paste in Supabase SQL Editor
+- Execute
+
+**That's it!** You're ready to use Cerevia.
+
+---
 
 ### Frontend
 
@@ -215,11 +262,13 @@ The platform is optimized for Indian exam patterns including:
 
 ### Prerequisites
 
-- Node.js 18+ (LTS recommended)
-- pnpm 8+ (or npm/yarn)
-- Git
-- Supabase account
-- GROQ API key
+- **Node.js**: 18+ (20 LTS recommended)
+- **pnpm**: 8+ (or npm 10+)
+- **Git**: 2.0+
+- **Supabase Account**: Free tier works fine
+- **GROQ API Key**: Get free key from [console.groq.com](https://console.groq.com)
+- **Disk Space**: ~500MB for dependencies
+- **RAM**: 2GB minimum (4GB recommended)
 
 ### Step 1: Clone Repository
 
@@ -626,32 +675,143 @@ const { notifications, addNotification } = useNotifications();
 
 ## ⚙️ Configuration
 
-### Tailwind CSS Configuration
+### Environment Variables
 
-Custom theme extends shadcn/ui:
+Create `.env.local`:
+
+```env
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-public-anon-key
+
+# GROQ AI API
+GROQ_API_KEY=your-groq-api-key-here
+
+# Optional: Analytics
+NEXT_PUBLIC_VERCEL_ANALYTICS_ID=your-analytics-id
+```
+
+### Session Management
+
+Cerevia uses **Supabase SSR Client** with automatic session handling:
+
+1. **Cookie Persistence**: Auth tokens stored securely in httpOnly cookies
+2. **Automatic Refresh**: Middleware automatically refreshes expired tokens
+3. **Session Sync**: Cross-tab session synchronization
+4. **Error Handling**: Graceful token refresh failures with user redirect
+
+**Middleware Flow**:
+
+```
+Request → Supabase Middleware → Refresh Session → User Redirect (if unauthorized)
+```
+
+### Database Schema
+
+PostgreSQL tables on Supabase:
+
+```sql
+-- Extends Supabase auth.users
+CREATE TABLE profile (
+  user_id UUID PRIMARY KEY REFERENCES auth.users(id),
+  name VARCHAR(255),
+  target_exam VARCHAR(100),
+  class VARCHAR(50),
+  strengths TEXT,
+  weakness TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE studyPlans (
+  plan_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES auth.users(id),
+  title VARCHAR(255),
+  overview TEXT,
+  topics JSONB,
+  resources JSONB,
+  daily_routines JSONB,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE Doubts (
+  doubt_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES auth.users(id),
+  question TEXT,
+  answer TEXT,
+  subject VARCHAR(100),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE quizzes (
+  quiz_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES auth.users(id),
+  plan_id UUID REFERENCES studyPlans(plan_id),
+  day_number INT,
+  questions JSONB,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Enable RLS
+ALTER TABLE profile ENABLE ROW LEVEL SECURITY;
+ALTER TABLE studyPlans ENABLE ROW LEVEL SECURITY;
+ALTER TABLE Doubts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE quizzes ENABLE ROW LEVEL SECURITY;
+
+-- RLS Policies
+CREATE POLICY "Users can read own profile"
+  ON profile FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own profile"
+  ON profile FOR UPDATE
+  USING (auth.uid() = user_id);
+```
+
+### Tailwind CSS v4
+
+Cerevia uses **Tailwind CSS v4** with the new `@tailwindcss/postcss` package:
 
 ```javascript
-// tailwind.config.js
-theme: {
-  extend: {
-    colors: {
-      primary: 'hsl(var(--primary))',
-      secondary: 'hsl(var(--secondary))',
-    }
-  }
-}
+// tailwind.config.ts
+import type { Config } from "tailwindcss";
+
+export default {
+  content: [
+    "./app/**/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        primary: "hsl(var(--primary))",
+        secondary: "hsl(var(--secondary))",
+      },
+    },
+  },
+} satisfies Config;
 ```
 
 ### Next.js Configuration
 
 ```javascript
 // next.config.mjs
-const config = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   reactStrictMode: true,
   experimental: {
-    turbopack: true, // Enable Turbopack for faster builds
+    turbopack: true, // Fast builds with Turbopack
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**.supabase.co",
+      },
+    ],
   },
 };
+
+export default nextConfig;
 ```
 
 ---
@@ -741,18 +901,176 @@ All pages are mobile-first:
 
 ---
 
-## 🔒 Security
+## 🔒 Security & Authentication
 
-- **Authentication**: Supabase JWT tokens
-- **Authorization**: Row-Level Security (RLS) on database
-- **API Keys**: Server-side only, never exposed to client
-- **HTTPS**: Always enabled
-- **CORS**: Configured for production domain
-- **Sensitive Data**: Never logged or stored unnecessarily
+### Authentication Flow
+
+1. **User Registration** → Email verification via Supabase
+2. **Session Creation** → JWT tokens stored in secure cookies
+3. **Middleware Validation** → Every request validates session
+4. **Token Refresh** → Automatic refresh via middleware (via `/middleware.ts`)
+5. **Logout** → Clears tokens and redirects to login
+
+### Security Best Practices
+
+- ✅ **HTTPS Only**: All traffic encrypted
+- ✅ **JWT Authentication**: Time-limited tokens (1 hour expiry)
+- ✅ **Refresh Tokens**: Secure token rotation
+- ✅ **Row-Level Security (RLS)**: Database-level access control
+- ✅ **Environment Variables**: Never expose API keys in client
+- ✅ **CSRF Protection**: Built-in Next.js protection
+- ✅ **Rate Limiting**: Implemented on API routes
+- ✅ **Input Validation**: All user inputs sanitized with Zod
+
+### Session Management Issues & Solutions
+
+**Issue**: "Invalid Refresh Token: Refresh Token Not Found"
+
+**Root Causes**:
+
+1. Cookies not persisted properly
+2. Missing middleware for token refresh
+3. Server-side client not configured for SSR
+
+**Solution** (Implemented in v2.0):
+
+```typescript
+// Supabase client with cookie handling
+const supabase = createBrowserClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  {
+    cookies: {
+      getAll() { /* retrieve from document.cookie */ },
+      setAll(cookiesToSet) { /* persist to document.cookie */ }
+    }
+  }
+);
+
+// Middleware automatically refreshes tokens
+export async function updateSession(request: NextRequest) {
+  const supabase = createServerClient(...);
+  await supabase.auth.getUser(); // Triggers auto-refresh
+  return response;
+}
+```
 
 ---
 
-## 🤝 Contributing
+## ✅ Testing
+
+### Running Tests
+
+```bash
+# Run all tests
+pnpm test
+
+# Run with coverage
+pnpm test:coverage
+
+# Watch mode for development
+pnpm test:watch
+```
+
+### Manual Testing Checklist
+
+- [ ] **Authentication**
+  - [ ] Sign up with new email
+  - [ ] Verify email confirmation
+  - [ ] Sign in with credentials
+  - [ ] Stay logged in across page refreshes
+  - [ ] Session persists after browser restart
+
+- [ ] **Dashboard**
+  - [ ] Charts load with sample data
+  - [ ] Streak counter increments
+  - [ ] Quick action buttons navigate correctly
+  - [ ] Responsive on mobile
+
+- [ ] **Study Planner**
+  - [ ] Generate study plan (takes ~5-10s)
+  - [ ] Download PDF of plan
+  - [ ] Display plan with proper formatting
+  - [ ] Save plan to account
+
+- [ ] **Doubt Solver**
+  - [ ] Submit question
+  - [ ] Receive AI answer in <30s
+  - [ ] Markdown formatting displays correctly
+  - [ ] Subject detection works
+
+- [ ] **Quiz**
+  - [ ] Create quiz from study plan
+  - [ ] Submit answers
+  - [ ] View results with score
+  - [ ] Streak counter updates
+
+- [ ] **Settings**
+  - [ ] Theme toggle works
+  - [ ] Font size persists on reload
+  - [ ] Compact view reduces spacing
+  - [ ] Animation toggle disables Framer Motion
+
+### API Testing
+
+Use provided PowerShell scripts:
+
+```bash
+# Test all APIs
+.\TEST_RESULTS.ps1
+
+# Test specific endpoint
+.\test-api.ps1
+```
+
+---
+
+### Current Status: ✅ Production Ready v2.0
+
+**Recent Fixes (January 2026)**:
+
+- ✅ Fixed "Invalid Refresh Token" error with proper session management
+- ✅ Implemented SSR-compatible Supabase client with cookie persistence
+- ✅ Added middleware for automatic token refresh
+- ✅ Fixed 4 Tailwind CSS v4 deprecation warnings
+- ✅ Enhanced security with RLS policies
+- ✅ Improved error handling and logging
+
+### Planned Features (Q2 2026)
+
+- 📚 **Community Features**
+  - Discussion forum for doubt clarification
+  - Peer-to-peer study groups
+  - Leaderboards by subject/exam
+
+- 🤖 **Enhanced AI**
+  - Multi-language support
+  - Voice-to-text Q&A
+  - AI tutor 1-on-1 sessions
+
+- 📊 **Advanced Analytics**
+  - ML-powered performance predictions
+  - Study pattern analysis
+  - Exam readiness scoring
+
+- 🎮 **Gamification**
+  - Achievement badges
+  - Daily challenges
+  - Subject mastery tracking
+
+- 📱 **Mobile App**
+  - Native React Native app
+  - Offline-first architecture
+  - Push notifications
+
+### Known Limitations
+
+- ⚠️ GROQ API has rate limits (upgrade plan for higher limits)
+- ⚠️ PDF parsing limited to text-based PDFs (not image-heavy)
+- ⚠️ Quiz generation supports up to 50 questions per session
+- ⚠️ File uploads limited to 10MB per file
+
+---
 
 1. Fork the repository
 2. Create feature branch: `git checkout -b feature/amazing-feature`
@@ -776,21 +1094,79 @@ All pages are mobile-first:
 
 ## 🐛 Troubleshooting
 
-### Issue: "Cannot find GROQ API key"
+### Authentication Issues
 
-**Solution**: Add `GROQ_API_KEY` to `.env.local`
+#### "Invalid Refresh Token: Refresh Token Not Found"
 
-### Issue: "Supabase connection failed"
+- **Cause**: Session cookies not persisted or middleware missing
+- **Fix**: Ensure `middleware.ts` exists and Supabase client has cookie handlers
+- **Verify**: Check browser DevTools → Application → Cookies for `sb-*` tokens
 
-**Solution**: Verify `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are correct
+#### "Cannot read property 'user' of null"
 
-### Issue: Dark mode not working
+- **Cause**: User not authenticated
+- **Fix**: Redirect to login page in middleware
+- **Code**: See `utils/supabase/middleware.ts` redirect logic
 
-**Solution**: Clear browser cache and reload. Theme persists in localStorage.
+#### "Supabase connection failed"
 
-### Issue: PDF download fails
+- **Cause**: Invalid credentials or network issue
+- **Fix**:
+  1. Verify `NEXT_PUBLIC_SUPABASE_URL` format: `https://xxx.supabase.co`
+  2. Check `NEXT_PUBLIC_SUPABASE_ANON_KEY` is correct
+  3. Test Supabase connection: `curl -X GET "https://xxx.supabase.co/rest/v1/" -H "Authorization: Bearer xxx"`
 
-**Solution**: Ensure you have written the summary before downloading
+#### Dark Mode Not Working
+
+- **Cause**: Theme not persisting in localStorage
+- **Fix**: Clear browser cache → DevTools → Application → Clear site data
+- **Verify**: `localStorage.getItem('theme')` should return 'dark' or 'light'
+
+### Performance Issues
+
+#### Slow Page Load (>3s)
+
+- **Cause**: Large bundle size or slow GROQ API
+- **Fix**:
+  1. Run `next build` and check bundle size
+  2. Optimize images with Next.js Image component
+  3. Enable Turbopack in `next.config.mjs`
+
+#### Quiz Generation Timeout
+
+- **Cause**: GROQ API rate limit or network latency
+- **Fix**:
+  1. Check GROQ API status
+  2. Verify `GROQ_API_KEY` is valid
+  3. Add retry logic with exponential backoff
+
+### Database Issues
+
+#### "RLS policy denies access"
+
+- **Cause**: Row-Level Security policy not matching user
+- **Fix**: Check `auth.uid()` matches `user_id` in RLS policies
+- **Debug**: Run in Supabase SQL editor to verify policies
+
+#### "Column does not exist"
+
+- **Cause**: Schema mismatch after migrations
+- **Fix**: Run migration script or recreate tables via Supabase UI
+- **Verify**: Compare `schema.sql` with actual database structure
+
+### API Issues
+
+#### "Failed to fetch with status 401"
+
+- **Cause**: Invalid or expired authentication token
+- **Fix**: User needs to re-login; check session refresh in middleware
+- **Log**: Check browser DevTools Console for detailed error
+
+#### "GROQ API rate limit exceeded"
+
+- **Cause**: Too many requests to AI API
+- **Fix**: Implement request queuing or upgrade GROQ plan
+- **Monitor**: Check GROQ dashboard for usage stats
 
 ---
 
