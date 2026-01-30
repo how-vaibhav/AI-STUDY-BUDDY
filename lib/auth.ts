@@ -24,6 +24,7 @@ export async function signUp(email: string, password: string) {
 		});
 
 		if (authError) {
+			console.log(authError);
 			return { error: authError.message };
 		}
 
