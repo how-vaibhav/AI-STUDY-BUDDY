@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { Brain } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -13,38 +14,44 @@ export function AuthNav() {
       transition={{ duration: 0.6, ease: "easeOut" }}
     >
       <div className="h-full flex items-center justify-between px-6 max-w-7xl mx-auto w-full">
-        <motion.div
+        <Link
+          href="/welcome"
+          aria-label="Back to welcome"
           className="flex items-center gap-4"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
         >
           <motion.div
-            className="p-2.5 rounded-lg bg-white/15 dark:bg-slate-700/40 backdrop-blur-sm border border-white/20 dark:border-slate-600/20 hover:bg-white/25 dark:hover:bg-slate-700/60 transition-all duration-300"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            className="flex items-center gap-4"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
           >
-            <Brain className="w-6 h-6 text-white dark:text-indigo-300" />
-          </motion.div>
-          <motion.div className="flex flex-col leading-tight">
-            <motion.span
-              className="text-lg font-bold text-white dark:text-slate-100 tracking-tight"
-              initial={{ letterSpacing: "0.05em" }}
-              animate={{ letterSpacing: "0em" }}
-              transition={{ duration: 0.6 }}
+            <motion.div
+              className="p-2.5 rounded-lg bg-white/15 dark:bg-slate-700/40 backdrop-blur-sm border border-white/20 dark:border-slate-600/20 hover:bg-white/25 dark:hover:bg-slate-700/60 transition-all duration-300"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              Cerevia
-            </motion.span>
-            <motion.span
-              className="text-xs text-white/75 dark:text-slate-300/70 font-medium"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
-              The Path to Understanding
-            </motion.span>
+              <Brain className="w-6 h-6 text-white dark:text-indigo-300" />
+            </motion.div>
+            <motion.div className="flex flex-col leading-tight">
+              <motion.span
+                className="text-lg font-bold text-white dark:text-slate-100 tracking-tight"
+                initial={{ letterSpacing: "0.05em" }}
+                animate={{ letterSpacing: "0em" }}
+                transition={{ duration: 0.6 }}
+              >
+                Cerevia
+              </motion.span>
+              <motion.span
+                className="text-xs text-white/75 dark:text-slate-300/70 font-medium"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+              >
+                The Path to Understanding
+              </motion.span>
+            </motion.div>
           </motion.div>
-        </motion.div>
+        </Link>
 
         {/* Decorative line */}
         <motion.div
