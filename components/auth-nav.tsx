@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 export function AuthNav() {
   return (
     <motion.nav
-      className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-indigo-600/95 via-purple-600/95 to-indigo-600/95 dark:from-slate-950/95 dark:via-slate-900/95 dark:to-slate-950/95 backdrop-blur-xl border-b border-white/10 dark:border-slate-700/30 h-16 shadow-lg"
+      className="fixed top-0 left-0 right-0 z-50 bg-linear-to-r from-indigo-600/95 via-purple-600/95 to-indigo-600/95 dark:from-slate-950/95 dark:via-slate-900/95 dark:to-slate-950/95 backdrop-blur-xl border-b border-white/10 dark:border-slate-700/30 h-16 shadow-lg"
       initial={{ y: -80 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
@@ -55,7 +55,7 @@ export function AuthNav() {
 
         {/* Decorative line */}
         <motion.div
-          className="flex-1 h-px bg-gradient-to-r from-white/0 via-white/20 to-white/0 dark:from-slate-600/0 dark:via-slate-500/20 dark:to-slate-600/0 mx-8"
+          className="flex-1 h-px bg-linear-to-r from-white/0 via-white/20 to-white/0 dark:from-slate-600/0 dark:via-slate-500/20 dark:to-slate-600/0 mx-8"
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
           transition={{ duration: 0.8, delay: 0.3 }}

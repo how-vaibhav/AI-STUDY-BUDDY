@@ -885,7 +885,7 @@ export default function DoubtSolverPage() {
                               href={video.url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="p-3 rounded-lg bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 border border-purple-200/40 dark:border-purple-500/30 hover:shadow-md transition-all hover:border-purple-400 group"
+                              className="p-3 rounded-lg bg-linear-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 border border-purple-200/40 dark:border-purple-500/30 hover:shadow-md transition-all hover:border-purple-400 group"
                             >
                               <div className="flex items-start gap-3 mb-2">
                                 <div className="p-2 rounded-lg bg-purple-100 group-hover:bg-purple-200 transition">

@@ -52,8 +52,8 @@ export default function StudyPlans() {
       <DashboardNav />
 
       <MouseParallax strength={0.03} enableOnTouchDevice={false}>
-        <div className="absolute -top-40 -left-40 h-[28rem] w-[28rem] rounded-full bg-emerald-300/20 blur-3xl" />
-        <div className="absolute -bottom-40 -right-40 h-[28rem] w-[28rem] rounded-full bg-purple-300/20 blur-3xl" />
+        <div className="absolute -top-40 -left-40 h-112 w-md rounded-full bg-emerald-300/20 blur-3xl" />
+        <div className="absolute -bottom-40 -right-40 h-112 w-md rounded-full bg-purple-300/20 blur-3xl" />
       </MouseParallax>
 
       {plans?.length > 0 ? (

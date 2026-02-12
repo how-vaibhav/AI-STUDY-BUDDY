@@ -122,7 +122,7 @@ export default function AboutPage() {
             learning tools and personalized study experiences.
           </p>
           <Link href="/dashboard">
-            <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:scale-105 transition">
+            <Button className="bg-linear-to-r from-indigo-600 to-purple-600 text-white hover:scale-105 transition">
               Start Learning Today
             </Button>
           </Link>

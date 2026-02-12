@@ -462,8 +462,8 @@ export default function NotesSummarizerPage() {
     <div className="relative min-h-screen overflow-hidden bg-linear-to-br from-emerald-50 via-blue-50 to-purple-50 dark:from-slate-900 dark:via-emerald-900 dark:to-slate-900">
       {/* Parallax background accents */}
       <MouseParallax strength={0.03} enableOnTouchDevice={false}>
-        <div className="absolute -top-40 -left-40 h-112 w-112 rounded-full bg-emerald-300/20 blur-3xl" />
-        <div className="absolute -bottom-40 -right-40 h-112 w-112 rounded-full bg-purple-300/20 blur-3xl" />
+        <div className="absolute -top-40 -left-40 h-112 w-md rounded-full bg-emerald-300/20 blur-3xl" />
+        <div className="absolute -bottom-40 -right-40 h-112 w-md rounded-full bg-purple-300/20 blur-3xl" />
       </MouseParallax>
 
       <main

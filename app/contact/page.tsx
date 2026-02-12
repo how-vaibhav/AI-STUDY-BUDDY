@@ -84,7 +84,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-purple-900 dark:to-slate-900 py-12 px-4">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-purple-900 dark:to-slate-900 py-12 px-4">
       <div className="max-w-6xl mx-auto">
         {/* Hero Section */}
         <motion.div
@@ -94,7 +94,7 @@ export default function ContactPage() {
           className="text-center mb-8 sm:mb-12"
           data-animate
         >
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-3 sm:mb-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-linear-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-3 sm:mb-4">
             Get in Touch
           </h1>
           <p className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-2xl mx-auto px-2">
@@ -136,7 +136,7 @@ export default function ContactPage() {
                 data-animate
               >
                 <div
-                  className={`inline-block p-2 sm:p-3 rounded-lg bg-gradient-to-br ${item.color} text-white mb-3 sm:mb-4`}
+                  className={`inline-block p-2 sm:p-3 rounded-lg bg-linear-to-br ${item.color} text-white mb-3 sm:mb-4`}
                 >
                   <Icon className="w-5 sm:w-6 h-5 sm:h-6" />
                 </div>
@@ -228,7 +228,7 @@ export default function ContactPage() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full h-10 bg-gradient-to-r from-purple-600 to-blue-600 text-sm text-white hover:scale-[1.02] transition"
+                className="w-full h-10 bg-linear-to-r from-purple-600 to-blue-600 text-sm text-white hover:scale-[1.02] transition"
               >
                 {loading ? (
                   <span className="flex items-center gap-2">
@@ -250,7 +250,7 @@ export default function ContactPage() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3, duration: 0.6 }}
-            className="bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-lg p-4 sm:p-6 md:p-8"
+            className="bg-linear-to-br from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-lg p-4 sm:p-6 md:p-8"
             data-animate
           >
             <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 dark:text-white">

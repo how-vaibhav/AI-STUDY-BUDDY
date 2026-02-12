@@ -142,7 +142,7 @@ export default function FeedbackPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 py-12 md:py-20">
+    <div className="min-h-screen bg-linear-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 py-12 md:py-20">
       <div ref={containerRef} className="container mx-auto px-4 max-w-2xl">
         <motion.div
           variants={containerVariants}
@@ -267,7 +267,7 @@ export default function FeedbackPage() {
                     <Button
                       type="submit"
                       disabled={loading}
-                      className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white transition-all duration-300 h-10"
+                      className="w-full bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white transition-all duration-300 h-10"
                     >
                       {loading ? (
                         <>

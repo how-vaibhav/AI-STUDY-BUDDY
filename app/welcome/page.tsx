@@ -56,10 +56,10 @@ export default function WelcomePage() {
   };
 
   return (
-    <div className="relative overflow-hidden bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+    <div className="relative overflow-hidden bg-linear-to-b from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
       {/* Subtle decorative elements */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-indigo-100/30 to-purple-100/20 rounded-full blur-3xl -mr-48 -mt-48 dark:from-indigo-900/20 dark:to-purple-900/10" />
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-slate-200/20 to-slate-100/10 rounded-full blur-3xl -ml-48 -mb-48 dark:from-slate-800/20 dark:to-slate-900/10" />
+      <div className="absolute top-0 right-0 w-96 h-96 bg-linear-to-br from-indigo-100/30 to-purple-100/20 rounded-full blur-3xl -mr-48 -mt-48 dark:from-indigo-900/20 dark:to-purple-900/10" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-linear-to-tr from-slate-200/20 to-slate-100/10 rounded-full blur-3xl -ml-48 -mb-48 dark:from-slate-800/20 dark:to-slate-900/10" />
 
       {/* Top Navigation Bar */}
       <nav className="sticky top-0 z-40 border-b bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg border-slate-200 dark:border-slate-800">
@@ -113,7 +113,7 @@ export default function WelcomePage() {
               className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight tracking-tight text-slate-900 dark:text-white"
             >
               Structured Learning,{" "}
-              <span className="bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent">
                 Not Just Answers
               </span>
             </motion.h1>
@@ -304,7 +304,7 @@ export default function WelcomePage() {
                   whileHover={{ y: -4 }}
                   className="p-6 rounded-lg bg-white dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 hover:shadow-md transition-all"
                 >
-                  <div className="p-3 rounded-lg bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/40 dark:to-purple-900/40 w-fit mb-4">
+                  <div className="p-3 rounded-lg bg-linear-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/40 dark:to-purple-900/40 w-fit mb-4">
                     <div className="text-indigo-700 dark:text-indigo-400">
                       {f.icon}
                     </div>
@@ -442,7 +442,7 @@ export default function WelcomePage() {
           >
             <motion.div
               variants={item}
-              className="p-8 rounded-lg bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/20 dark:to-purple-900/20 border border-indigo-300 dark:border-indigo-800/50"
+              className="p-8 rounded-lg bg-linear-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/20 dark:to-purple-900/20 border border-indigo-300 dark:border-indigo-800/50"
             >
               <p className="text-lg md:text-xl text-slate-900 dark:text-white font-light leading-relaxed">
                 <span className="font-semibold">
