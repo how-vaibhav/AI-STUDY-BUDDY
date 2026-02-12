@@ -5,7 +5,7 @@
 ## 🌐 Live Application
 
 🚀 **Try Cerevia Now**  
-🔗 https://ai-study-buddy-self.vercel.app/login
+🔗 https://ai-study-buddy-self.vercel.app/welcome
 
 ![Next.js](https://img.shields.io/badge/Next.js-16.0.10-black?style=flat-square&logo=next.js)
 ![React](https://img.shields.io/badge/React-19-blue?style=flat-square&logo=react)
