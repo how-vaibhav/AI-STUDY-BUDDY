@@ -19,6 +19,7 @@
 ## 📋 Table of Contents
 
 - [Overview](#overview)
+- [Visual Gallery](#-visual-gallery)
 - [Key Features](#key-features)
 - [Technology Stack](#technology-stack)
 - [Installation & Setup](#installation--setup)
@@ -60,6 +61,18 @@
 - 🔐 **Secure Auth** - Supabase JWT with email verification
 
 The platform supports exam types including **JEE Advanced/Main**, **NEET**, **GATE**, **Board Exams**, and more.
+
+---
+
+## 📸 Visual Gallery
+
+All production screenshots live in the `Screenshots/` directory at the repository root. Each image is captured from the deployed build (desktop + responsive breakpoints) so you can:
+
+- Enrich product decks, pitches, or investor memos with consistent UI shots
+- Document visual regressions during QA by comparing against the source-of-truth images
+- Update the landing page or marketing site without re-recording flows
+
+Screenshots are organized by feature flow (dashboard, planner, quizzes, onboarding, etc.) so reviewers can quickly jump to the relevant UI surface. Add new captures following the same naming convention (`feature-view_state.png`) to keep the gallery professional and searchable.
 
 ---
 
