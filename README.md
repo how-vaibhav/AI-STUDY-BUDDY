@@ -79,64 +79,42 @@ Screenshots are organized by feature flow (dashboard, planner, quizzes, onboardi
 <table>
   <tr>
     <td width="33%">
-      <strong>01 · Desktop Canvas</strong><br />
-      <em>High-fidelity export from the production UI.</em><br />
       <img src="Screenshots/Study_Buddy%20(1).png" alt="Screenshot 01" width="260" />
     </td>
     <td width="33%">
-      <strong>02 · System Walkthrough</strong><br />
-      <em>Sequential capture highlighting core flows.</em><br />
       <img src="Screenshots/Study_Buddy%20(2).png" alt="Screenshot 02" width="260" />
     </td>
     <td width="33%">
-      <strong>03 · Interaction Detail</strong><br />
-      <em>UI micro-interactions at desktop scale.</em><br />
       <img src="Screenshots/Study_Buddy%20(3).png" alt="Screenshot 03" width="260" />
     </td>
   </tr>
   <tr>
     <td width="33%">
-      <strong>04 · Planner Surfaces</strong><br />
-      <em>Shows structured scheduling layout.</em><br />
       <img src="Screenshots/Study_Buddy%20(4).png" alt="Screenshot 04" width="260" />
     </td>
     <td width="33%">
-      <strong>05 · Assessment Flow</strong><br />
-      <em>Quiz-ready view with contextual cues.</em><br />
       <img src="Screenshots/Study_Buddy%20(5).png" alt="Screenshot 05" width="260" />
     </td>
     <td width="33%">
-      <strong>06 · Notes Intelligence</strong><br />
-      <em>Summarization workspace and output.</em><br />
       <img src="Screenshots/Study_Buddy%20(6).png" alt="Screenshot 06" width="260" />
     </td>
   </tr>
   <tr>
     <td width="33%">
-      <strong>07 · Profile Personalization</strong><br />
-      <em>User preferences, avatars, and setup.</em><br />
       <img src="Screenshots/Study_Buddy%20(7).png" alt="Screenshot 07" width="260" />
     </td>
     <td width="33%">
-      <strong>08 · Notification Center</strong><br />
-      <em>Signals feed with actionable cards.</em><br />
       <img src="Screenshots/Study_Buddy%20(8).png" alt="Screenshot 08" width="260" />
     </td>
     <td width="33%">
-      <strong>09 · Settings & Themes</strong><br />
-      <em>Display controls, density, and theming.</em><br />
       <img src="Screenshots/Study_Buddy%20(9).png" alt="Screenshot 09" width="260" />
     </td>
   </tr>
   <tr>
     <td width="33%">
-      <strong>10 · Welcome Story</strong><br />
-      <em>Brand-forward onboarding narrative.</em><br />
       <img src="Screenshots/Study_Buddy%20(10).png" alt="Screenshot 10" width="260" />
     </td>
     <td width="33%">
-      <strong>11 · Footer & Trust</strong><br />
-      <em>Contact, resources, and social proof.</em><br />
       <img src="Screenshots/Study_Buddy%20(11).png" alt="Screenshot 11" width="260" />
     </td>
     <td width="33%">&nbsp;</td>
